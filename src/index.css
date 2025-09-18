@@ -2,41 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* CareConnect Design System - Elderly-First Design with Warm Beige Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm beige/cream color palette for elderly comfort */
+    --background: 42 15% 97%;  /* Warm cream background */
+    --foreground: 25 25% 15%;  /* Dark brown text for high contrast */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 42 20% 95%;  /* Slightly warmer white for cards */
+    --card-foreground: 25 25% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 42 20% 95%;
+    --popover-foreground: 25 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Warm brown primary for trust and comfort */
+    --primary: 25 40% 25%;  /* Rich brown */
+    --primary-foreground: 42 15% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 42 20% 90%;  /* Light beige */
+    --secondary-foreground: 25 25% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 42 15% 92%;  /* Soft beige */
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 35 25% 85%;  /* Warm accent */
+    --accent-foreground: 25 25% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Medical status colors - high contrast */
+    --success: 120 45% 35%;  /* Medical green */
+    --success-foreground: 120 45% 95%;
+    
+    --warning: 35 80% 50%;  /* Clear orange */
+    --warning-foreground: 35 80% 95%;
+    
+    --destructive: 0 70% 45%;  /* Medical red */
+    --destructive-foreground: 0 70% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 42 15% 85%;
+    --input: 42 15% 90%;
+    --ring: 25 40% 25%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;  /* Slightly more rounded for friendliness */
+    
+    /* Gradient for hero sections */
+    --gradient-warm: linear-gradient(135deg, hsl(42 20% 95%), hsl(35 25% 90%));
+    
+    /* Elderly-specific design tokens */
+    --text-large: 18px;  /* Minimum readable size */
+    --text-xlarge: 22px;
+    --spacing-comfortable: 1.5rem;  /* Generous spacing */
+    --touch-target: 48px;  /* Large touch targets */
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +116,52 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-['Verdana',_'Arial',_sans-serif];
+    font-size: var(--text-large);
+    line-height: 1.6;
+  }
+
+  /* Elderly-friendly typography */
+  h1 {
+    @apply text-3xl md:text-4xl font-bold;
+    font-size: 28px;
+  }
+  
+  h2 {
+    @apply text-2xl font-semibold;
+    font-size: var(--text-xlarge);
+  }
+  
+  /* Mobile-first button sizing */
+  .btn-elderly {
+    min-height: var(--touch-target);
+    padding: 1rem 1.5rem;
+    font-size: var(--text-large);
+    font-weight: 600;
+  }
+  
+  /* Smooth slide animations for mobile */
+  .slide-in-right {
+    @apply transform transition-transform duration-300 ease-out;
+    transform: translateX(100%);
+  }
+  
+  .slide-in-right.active {
+    transform: translateX(0);
+  }
+  
+  .slide-in-left {
+    @apply transform transition-transform duration-300 ease-out;
+    transform: translateX(-100%);
+  }
+  
+  .slide-in-left.active {
+    transform: translateX(0);
+  }
+  
+  /* High contrast focus states for accessibility */
+  .elderly-focus:focus {
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 2px;
   }
 }
