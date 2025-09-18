@@ -56,6 +56,10 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        "medication-primary": {
+          DEFAULT: "hsl(var(--medication-primary))",
+          foreground: "hsl(var(--medication-primary-foreground))",
+        },
         /* Sidebar colors */
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

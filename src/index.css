@@ -38,6 +38,10 @@
     
     --destructive: 0 70% 45%;  /* Medical red */
     --destructive-foreground: 0 70% 95%;
+    
+    /* Orange primary button for medications */
+    --medication-primary: 22 85% 52%;  /* Orange like in the design */
+    --medication-primary-foreground: 0 0% 100%;
 
     --border: 42 15% 85%;
     --input: 42 15% 90%;
