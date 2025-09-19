@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const LoginSignup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -12,8 +13,37 @@ const LoginSignup = () => {
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtp, setShowOtp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/role-selection`
+        }
+      });
+      
+      if (error) {
+        toast({
+          title: "Sign In Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Sign In Failed", 
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSendOtp = () => {
     if (!phoneNumber || phoneNumber.length < 10) {
@@ -108,8 +138,13 @@ const LoginSignup = () => {
                 <div className="text-center text-sm text-muted-foreground">or</div>
                 
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full btn-elderly">
-                    Sign up with Google
+                  <Button 
+                    variant="outline" 
+                    className="w-full btn-elderly"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Signing in..." : "Sign up with Google"}
                   </Button>
                   <Button variant="outline" className="w-full btn-elderly">
                     Sign up with Email
@@ -138,6 +173,17 @@ const LoginSignup = () => {
                   onClick={handleLogin}
                 >
                   Login
+                </Button>
+                
+                <div className="text-center text-sm text-muted-foreground">or</div>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full btn-elderly"
+                  onClick={handleGoogleSignIn}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing in..." : "Sign in with Google"}
                 </Button>
               </div>
             </TabsContent>
