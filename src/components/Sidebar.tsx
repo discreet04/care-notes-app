@@ -33,9 +33,6 @@ const Sidebar = ({ isOpen, onClose, currentRole }: SidebarProps) => {
   };
 
   const patientMenuItems = [
-    { icon: Home, label: "Home & Medications", value: "medications" },
-    { icon: Activity, label: "Symptoms", value: "symptoms" },
-    { icon: MessageCircle, label: "AI Assistant", value: "assistant" },
     { icon: UserPlus, label: "Add Caretaker", value: "caretaker" }
   ];
 

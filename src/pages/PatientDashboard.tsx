@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import Sidebar from "@/components/Sidebar";
 import BottomNavigation from "@/components/BottomNavigation";
 import LanguageToggle from "@/components/LanguageToggle";
 import AIChat from "@/components/AIChat";
+import { calculateTimeUntilDose, getMedicationStatus } from "@/utils/medicationTimer";
 import elderlyYoga from "@/assets/elderly-yoga.jpg";
 import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
 import familyProfile from "@/assets/family-profile.jpg";
@@ -29,6 +30,14 @@ const PatientDashboard = () => {
   ]);
   const { toast } = useToast();
   const { t } = useLanguage();
+  
+  // Update timers every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMedications(prev => [...prev]); // Trigger re-render for timer updates
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [medicationForm, setMedicationForm] = useState({
     name: "",
@@ -200,15 +209,24 @@ const PatientDashboard = () => {
                         </div>
                       )}
                     </div>
-                    <div className="text-right">
-                      <div className="flex items-center text-primary mb-2">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        ✓ {t('taken')}
-                      </Button>
-                    </div>
+                     <div className="text-right">
+                       <div className="flex items-center text-primary mb-2">
+                         <Clock className="h-4 w-4 mr-1" />
+                         <span className="text-sm font-medium">{med.time || "No time set"}</span>
+                       </div>
+                       {med.time && (
+                         <div className={`text-xs px-2 py-1 rounded-full mb-2 ${
+                           getMedicationStatus(med.time) === 'urgent' ? 'bg-red-100 text-red-800' :
+                           getMedicationStatus(med.time) === 'soon' ? 'bg-yellow-100 text-yellow-800' :
+                           'bg-green-100 text-green-800'
+                         }`}>
+                           {calculateTimeUntilDose(med.time)}
+                         </div>
+                       )}
+                       <Button size="sm" variant="outline">
+                         ✓ {t('taken')}
+                       </Button>
+                     </div>
                   </div>
                 </div>
               ))}
@@ -218,11 +236,11 @@ const PatientDashboard = () => {
       </Card>
 
       {/* Ask Caretaker Help */}
-      <Card className="bg-gradient-to-r from-primary/10 to-secondary/20 cursor-pointer border-primary/20" onClick={requestCaretakerHelp}>
+      <Card className="bg-gradient-to-r from-orange-50 to-amber-50 cursor-pointer border-orange-200 hover:shadow-md transition-shadow" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-400 rounded-full flex items-center justify-center mr-4 shadow-sm">
                 <span className="text-2xl">🤝</span>
               </div>
               <div>
@@ -230,149 +248,7 @@ const PatientDashboard = () => {
                 <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
               </div>
             </div>
-            <HelpCircle className="h-6 w-6 text-primary" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Add Medication Form */}
-      {showMedicationForm && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Add New Medication</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="name">Medication Name</Label>
-              <Input
-                id="name"
-                placeholder="e.g., Combiflam, Aspirin"
-                value={medicationForm.name}
-                onChange={(e) => setMedicationForm({ ...medicationForm, name: e.target.value })}
-                className="elderly-focus"
-              />
-            </div>
-            <div>
-              <Label htmlFor="dosage">Dosage</Label>
-              <Input
-                id="dosage"
-                placeholder="e.g., 500 mg, 1 tablet"
-                value={medicationForm.dosage}
-                onChange={(e) => setMedicationForm({ ...medicationForm, dosage: e.target.value })}
-                className="elderly-focus"
-              />
-            </div>
-            <div>
-              <Label htmlFor="frequency">Frequency</Label>
-              <Input
-                id="frequency"
-                placeholder="e.g., Once Daily, Twice Daily"
-                value={medicationForm.frequency}
-                onChange={(e) => setMedicationForm({ ...medicationForm, frequency: e.target.value })}
-                className="elderly-focus"
-              />
-            </div>
-            <div>
-              <Label htmlFor="time">Reminder Time</Label>
-              <Input
-                id="time"
-                type="time"
-                value={medicationForm.time}
-                onChange={(e) => setMedicationForm({ ...medicationForm, time: e.target.value })}
-                className="elderly-focus"
-              />
-            </div>
-            <div>
-              <Label htmlFor="instructions">Instructions (Optional)</Label>
-              <Textarea
-                id="instructions"
-                placeholder="e.g., Take with food"
-                value={medicationForm.instructions}
-                onChange={(e) => setMedicationForm({ ...medicationForm, instructions: e.target.value })}
-                className="elderly-focus"
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button onClick={handleAddMedication} className="btn-elderly bg-primary">
-                Add Medication
-              </Button>
-              <Button variant="outline" onClick={() => setShowMedicationForm(false)}>
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Today's Medications */}
-      <Card className="bg-secondary/20">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-foreground">आज की दवाएं (Today's Medicines)</CardTitle>
-            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-              <span className="text-lg">💊</span>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {medications.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🌿</span>
-              </div>
-              <p className="text-lg text-muted-foreground">कोई दवा नहीं मिली</p>
-              <p className="text-sm text-muted-foreground">No medications added yet</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {medications.map((med) => (
-                <div key={med.id} className="border rounded-lg p-4 bg-card shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">💊</span>
-                        <h3 className="font-bold text-lg">{med.name}</h3>
-                      </div>
-                      <p className="text-muted-foreground font-medium">{med.dosage}</p>
-                      <p className="text-sm text-muted-foreground">{med.frequency}</p>
-                      {med.instructions && (
-                        <div className="flex items-center mt-2 p-2 bg-warning/10 rounded-md">
-                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
-                          <span className="text-sm text-warning">{med.instructions}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center text-primary mb-2">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        ✓ Taken
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Ask Caretaker Help */}
-      <Card className="bg-gradient-to-r from-primary/10 to-secondary/20 cursor-pointer border-primary/20" onClick={requestCaretakerHelp}>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
-                <span className="text-2xl">🤝</span>
-              </div>
-              <div>
-                <p className="text-lg font-medium text-foreground">{t('needHelp')}</p>
-                <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
-              </div>
-            </div>
-            <HelpCircle className="h-6 w-6 text-primary" />
+            <HelpCircle className="h-6 w-6 text-orange-600" />
           </div>
         </CardContent>
       </Card>

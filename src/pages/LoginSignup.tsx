@@ -79,10 +79,26 @@ const LoginSignup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/30 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-primary">Welcome to CareConnect</CardTitle>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Indian Cultural Background Elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 text-6xl text-orange-600">🪔</div>
+        <div className="absolute top-20 right-20 text-4xl text-amber-600">🙏</div>
+        <div className="absolute bottom-20 left-20 text-5xl text-orange-500">🌿</div>
+        <div className="absolute bottom-10 right-10 text-4xl text-amber-500">🕉️</div>
+      </div>
+      
+      <Card className="w-full max-w-md shadow-xl border-orange-200/50 bg-white/95 backdrop-blur-sm">
+        <CardHeader className="text-center py-8">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-2xl text-white">🤝</span>
+            </div>
+          </div>
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+            CareConnect
+          </CardTitle>
+          <p className="text-muted-foreground mt-2">स्वास्थ्य और सेवा • Health & Care</p>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signup" className="w-full">
