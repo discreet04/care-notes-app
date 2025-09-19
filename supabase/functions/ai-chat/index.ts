@@ -25,11 +25,10 @@ serve(async (req) => {
       ? `आप एक सहायक स्वास्थ्य AI असिस्टेंट हैं जो बुजुर्गों की मदद करता है। आप दवाओं, स्वास्थ्य युक्तियों और सामान्य कल्याण के बारे में जानकारी देते हैं। हमेशा स्पष्ट, दयालु और समझने योग्य भाषा का उपयोग करें। यदि कोई गंभीर चिकित्सा चिंता है तो हमेशा डॉक्टर से सलाह लेने की सिफारिश करें। आयुर्वेदिक और पारंपरिक भारतीय उपचारों का उल्लेख करना उपयोगी है।`
       : `You are a helpful health AI assistant for elderly patients. You provide information about medications, health tips, and general wellness. Always use clear, kind, and understandable language. Always recommend consulting with a doctor for any serious medical concerns. It's helpful to mention Ayurvedic and traditional Indian remedies when appropriate.`;
 
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-goog-api-key': geminiApiKey,
       },
       body: JSON.stringify({
         contents: [
