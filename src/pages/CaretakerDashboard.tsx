@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Menu, Plus, UserCheck, UserX } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
@@ -58,23 +59,37 @@ const CaretakerDashboard = () => {
                       <p className="text-muted-foreground">{invitation.phone}</p>
                       <p className="text-sm text-muted-foreground">Invited {invitation.timestamp}</p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        className="bg-success text-success-foreground hover:bg-success/90"
-                        onClick={() => handleAcceptInvitation(invitation.id)}
-                      >
-                        <UserCheck className="h-4 w-4 mr-1" />
-                        Accept
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRejectInvitation(invitation.id)}
-                      >
-                        <UserX className="h-4 w-4 mr-1" />
-                        Reject
-                      </Button>
+                    <div className="flex gap-1">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8 bg-success/10 border-success text-success hover:bg-success hover:text-success-foreground"
+                            onClick={() => handleAcceptInvitation(invitation.id)}
+                          >
+                            <UserCheck className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Accept invitation</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="h-8 w-8"
+                            onClick={() => handleRejectInvitation(invitation.id)}
+                          >
+                            <UserX className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Reject invitation</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </div>
