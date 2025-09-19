@@ -154,6 +154,15 @@ const AIChat = () => {
             )}
           </ScrollArea>
           
+          {/* Medical Disclaimer */}
+          <div className="py-2 border-t border-b">
+            <p className="text-xs text-muted-foreground text-center">
+              ⚠️ {language === 'hi' 
+                ? 'यह केवल सामान्य जानकारी के लिए है। गंभीर स्वास्थ्य समस्याओं के लिए हमेशा डॉक्टर से सलाह लें।' 
+                : 'This is for general information only. Always consult a doctor for serious health concerns.'}
+            </p>
+          </div>
+          
           {/* Input Area */}
           <div className="flex gap-2 pt-4 border-t">
             <Input
