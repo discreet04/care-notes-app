@@ -234,8 +234,6 @@ const PatientDashboard = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
 
       {/* Add Medication Form */}
       {showMedicationForm && (
