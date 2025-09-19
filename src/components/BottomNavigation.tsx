@@ -1,5 +1,5 @@
 import { Home, Activity, MessageCircle, User, AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -7,12 +7,14 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
+  const { t } = useLanguage();
+  
   const navItems = [
-    { id: "home", icon: Home, label: "Home", color: "text-medication-primary" },
-    { id: "symptoms", icon: Activity, label: "Symptoms", color: "text-muted-foreground" },
-    { id: "ai-helper", icon: MessageCircle, label: "AI Helper", color: "text-muted-foreground" },
-    { id: "profile", icon: User, label: "Profile", color: "text-muted-foreground" },
-    { id: "panic", icon: AlertTriangle, label: "Panic", color: "text-destructive" }
+    { id: "home", icon: Home, label: t("home"), color: "text-medication-primary" },
+    { id: "symptoms", icon: Activity, label: t("symptoms"), color: "text-muted-foreground" },
+    { id: "ai-helper", icon: MessageCircle, label: t("aiHelper"), color: "text-muted-foreground" },
+    { id: "profile", icon: User, label: t("profile"), color: "text-muted-foreground" },
+    { id: "panic", icon: AlertTriangle, label: t("panic"), color: "text-destructive" }
   ];
 
   return (

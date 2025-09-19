@@ -7,8 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Sidebar from "@/components/Sidebar";
 import BottomNavigation from "@/components/BottomNavigation";
+import LanguageToggle from "@/components/LanguageToggle";
+import AIChat from "@/components/AIChat";
 import elderlyYoga from "@/assets/elderly-yoga.jpg";
 import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
 import familyProfile from "@/assets/family-profile.jpg";
@@ -25,6 +28,7 @@ const PatientDashboard = () => {
     { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-success" }
   ]);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const [medicationForm, setMedicationForm] = useState({
     name: "",
@@ -61,8 +65,8 @@ const PatientDashboard = () => {
 
   const requestCaretakerHelp = () => {
     toast({
-      title: "Caretaker Being Called", 
-      description: "Please have patience, your caretaker is being notified"
+      title: t('needHelp'), 
+      description: t('callCaretaker')
     });
   };
 
@@ -73,8 +77,8 @@ const PatientDashboard = () => {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-foreground">नमस्ते, राज जी!</h2>
-              <p className="text-muted-foreground">आज का दिन मंगलमय हो (May your day be blessed)</p>
+              <h2 className="text-xl font-bold text-foreground">{t('greeting')}</h2>
+              <p className="text-muted-foreground">{t('subtitle')}</p>
             </div>
             <div className="text-4xl">🙏</div>
           </div>
@@ -87,8 +91,151 @@ const PatientDashboard = () => {
         onClick={() => setShowMedicationForm(!showMedicationForm)}
       >
         <Plus className="h-6 w-6 mr-3" />
-        Add New Medication
+        {t('addNewMedication')}
       </Button>
+
+      {/* Add Medication Form */}
+      {showMedicationForm && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">{t('addNewMedicationTitle')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="name">{t('medicationName')}</Label>
+              <Input
+                id="name"
+                placeholder={t('medicationNamePlaceholder')}
+                value={medicationForm.name}
+                onChange={(e) => setMedicationForm({ ...medicationForm, name: e.target.value })}
+                className="elderly-focus"
+              />
+            </div>
+            <div>
+              <Label htmlFor="dosage">{t('dosage')}</Label>
+              <Input
+                id="dosage"
+                placeholder={t('dosagePlaceholder')}
+                value={medicationForm.dosage}
+                onChange={(e) => setMedicationForm({ ...medicationForm, dosage: e.target.value })}
+                className="elderly-focus"
+              />
+            </div>
+            <div>
+              <Label htmlFor="frequency">{t('frequency')}</Label>
+              <Input
+                id="frequency"
+                placeholder={t('frequencyPlaceholder')}
+                value={medicationForm.frequency}
+                onChange={(e) => setMedicationForm({ ...medicationForm, frequency: e.target.value })}
+                className="elderly-focus"
+              />
+            </div>
+            <div>
+              <Label htmlFor="time">{t('reminderTime')}</Label>
+              <Input
+                id="time"
+                type="time"
+                value={medicationForm.time}
+                onChange={(e) => setMedicationForm({ ...medicationForm, time: e.target.value })}
+                className="elderly-focus"
+              />
+            </div>
+            <div>
+              <Label htmlFor="instructions">{t('instructions')}</Label>
+              <Textarea
+                id="instructions"
+                placeholder={t('instructionsPlaceholder')}
+                value={medicationForm.instructions}
+                onChange={(e) => setMedicationForm({ ...medicationForm, instructions: e.target.value })}
+                className="elderly-focus"
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button onClick={handleAddMedication} className="btn-elderly bg-primary">
+                {t('addMedication')}
+              </Button>
+              <Button variant="outline" onClick={() => setShowMedicationForm(false)}>
+                {t('cancel')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Today's Medications */}
+      <Card className="bg-secondary/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold text-foreground">{t('todaysMedications')}</CardTitle>
+            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+              <span className="text-lg">💊</span>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {medications.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🌿</span>
+              </div>
+              <p className="text-lg text-muted-foreground">{t('noMedicationsYet')}</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {medications.map((med) => (
+                <div key={med.id} className="border rounded-lg p-4 bg-card shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">💊</span>
+                        <h3 className="font-bold text-lg">{med.name}</h3>
+                      </div>
+                      <p className="text-muted-foreground font-medium">{med.dosage}</p>
+                      <p className="text-sm text-muted-foreground">{med.frequency}</p>
+                      {med.instructions && (
+                        <div className="flex items-center mt-2 p-2 bg-warning/10 rounded-md">
+                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
+                          <span className="text-sm text-warning">{med.instructions}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center text-primary mb-2">
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
+                      </div>
+                      <Button size="sm" variant="outline">
+                        ✓ {t('taken')}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Ask Caretaker Help */}
+      <Card className="bg-gradient-to-r from-primary/10 to-secondary/20 cursor-pointer border-primary/20" onClick={requestCaretakerHelp}>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                <span className="text-2xl">🤝</span>
+              </div>
+              <div>
+                <p className="text-lg font-medium text-foreground">{t('needHelp')}</p>
+                <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
+              </div>
+            </div>
+            <HelpCircle className="h-6 w-6 text-primary" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
       {/* Add Medication Form */}
       {showMedicationForm && (
@@ -223,8 +370,8 @@ const PatientDashboard = () => {
                 <span className="text-2xl">🤝</span>
               </div>
               <div>
-                <p className="text-lg font-medium text-foreground">सहायता चाहिए? (Need Help?)</p>
-                <p className="text-sm text-muted-foreground">Call your caretaker for assistance</p>
+                <p className="text-lg font-medium text-foreground">{t('needHelp')}</p>
+                <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
               </div>
             </div>
             <HelpCircle className="h-6 w-6 text-primary" />
@@ -250,8 +397,8 @@ const PatientDashboard = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-2 left-2 text-white">
-                <h2 className="text-lg font-bold">Daily Wellness Tracker</h2>
-                <p className="text-sm">स्वास्थ्य ही धन है (Health is Wealth)</p>
+                <h2 className="text-lg font-bold">{t('dailyWellnessTracker')}</h2>
+                <p className="text-sm">{t('subtitle')}</p>
               </div>
             </div>
 
@@ -260,7 +407,7 @@ const PatientDashboard = () => {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Activity className="h-5 w-5 text-primary" />
-                  Today's Vitals
+                  {t('todaysVitals')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -277,7 +424,7 @@ const PatientDashboard = () => {
                           </div>
                         </div>
                         <Badge variant={symptom.status === "normal" ? "default" : "destructive"}>
-                          {symptom.status === "normal" ? "सामान्य" : "चेतावनी"}
+                          {t(symptom.status)}
                         </Badge>
                       </div>
                     );
@@ -289,7 +436,7 @@ const PatientDashboard = () => {
             {/* Traditional Remedies */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">आयुर्वेदिक सुझाव (Ayurvedic Tips)</CardTitle>
+                <CardTitle className="text-lg">{t('ayurvedicTips')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="relative h-24 rounded-lg overflow-hidden mb-4">
@@ -301,13 +448,13 @@ const PatientDashboard = () => {
                 </div>
                 <div className="space-y-3">
                   <div className="p-3 bg-primary/10 rounded-lg">
-                    <p className="text-sm">🌿 <strong>Turmeric Milk:</strong> Daily before bed for immunity</p>
+                    <p className="text-sm">🌿 <strong>{t('turmericMilk')}</strong></p>
                   </div>
                   <div className="p-3 bg-primary/10 rounded-lg">
-                    <p className="text-sm">🧘 <strong>Pranayama:</strong> 10 minutes morning breathing</p>
+                    <p className="text-sm">🧘 <strong>{t('pranayama')}</strong></p>
                   </div>
                   <div className="p-3 bg-primary/10 rounded-lg">
-                    <p className="text-sm">☕ <strong>Tulsi Tea:</strong> Twice daily for wellness</p>
+                    <p className="text-sm">☕ <strong>{t('tulsiTea')}</strong></p>
                   </div>
                 </div>
               </CardContent>
@@ -317,28 +464,17 @@ const PatientDashboard = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button variant="outline" className="h-16 flex-col gap-1">
                 <Thermometer className="h-5 w-5" />
-                <span className="text-sm">Record Temperature</span>
+                <span className="text-sm">{t('recordTemperature')}</span>
               </Button>
               <Button variant="outline" className="h-16 flex-col gap-1">
                 <Heart className="h-5 w-5" />
-                <span className="text-sm">Log BP</span>
+                <span className="text-sm">{t('logBP')}</span>
               </Button>
             </div>
           </div>
         );
       case "ai-helper":
-        return (
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">AI Health Assistant</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
+        return <AIChat />;
       case "profile":
         return (
           <div className="space-y-4">
@@ -357,11 +493,11 @@ const PatientDashboard = () => {
                   <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 border-4 border-background">
                     <User className="h-8 w-8 text-primary-foreground" />
                   </div>
-                  <h2 className="text-xl font-bold mb-1">राज कुमार शर्मा</h2>
+                  <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
                   <p className="text-muted-foreground">Age: 68 • Patient ID: #12345</p>
                   <Button size="sm" className="mt-3">
                     <Edit className="h-4 w-4 mr-2" />
-                    Edit Profile
+                    {t('editProfile')}
                   </Button>
                 </div>
               </CardContent>
@@ -370,21 +506,21 @@ const PatientDashboard = () => {
             {/* Personal Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Personal Information</CardTitle>
+                <CardTitle className="text-lg">{t('personalInfo')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
                     <Phone className="h-5 w-5 text-primary" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Phone</p>
+                      <p className="text-sm text-muted-foreground">{t('phone')}</p>
                       <p className="font-medium">+91 98765 43210</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
                     <MapPin className="h-5 w-5 text-primary" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Address</p>
+                      <p className="text-sm text-muted-foreground">{t('address')}</p>
                       <p className="font-medium">123 Gandhi Nagar, Delhi</p>
                     </div>
                   </div>
@@ -502,12 +638,12 @@ const PatientDashboard = () => {
           <Menu className="h-6 w-6" />
         </Button>
         <h1 className="text-xl font-bold text-foreground">
-          {activeTab === "home" ? "Home" : 
-           activeTab === "symptoms" ? "Symptoms" : 
-           activeTab === "ai-helper" ? "AI Helper" :
-           activeTab === "profile" ? "Profile" : "Panic"}
+          {t(activeTab === "home" ? "home" : 
+             activeTab === "symptoms" ? "symptoms" : 
+             activeTab === "ai-helper" ? "aiHelper" :
+             activeTab === "profile" ? "profile" : "panic")}
         </h1>
-        <div className="w-10" /> {/* Spacer */}
+        <LanguageToggle />
       </header>
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="patient" />
