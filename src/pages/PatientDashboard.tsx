@@ -4,16 +4,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Menu, Plus, Clock, AlertTriangle, HelpCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Sidebar from "@/components/Sidebar";
 import BottomNavigation from "@/components/BottomNavigation";
+import elderlyYoga from "@/assets/elderly-yoga.jpg";
+import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
+import familyProfile from "@/assets/family-profile.jpg";
+import healthSymbols from "@/assets/health-symbols.jpg";
 
 const PatientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [medications, setMedications] = useState<any[]>([]);
+  const [symptoms, setSymptoms] = useState([
+    { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-success" },
+    { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-primary" },
+    { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-success" }
+  ]);
   const { toast } = useToast();
 
   const [medicationForm, setMedicationForm] = useState({
@@ -58,6 +68,19 @@ const PatientDashboard = () => {
 
   const renderHomeContent = () => (
     <div className="space-y-4">
+      {/* Welcome Header with Indian Theme */}
+      <Card className="bg-gradient-to-r from-primary/10 to-secondary/20 border-none">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-foreground">नमस्ते, राज जी!</h2>
+              <p className="text-muted-foreground">आज का दिन मंगलमय हो (May your day be blessed)</p>
+            </div>
+            <div className="text-4xl">🙏</div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Add New Medication Button */}
       <Button
         className="w-full h-14 text-lg font-semibold bg-medication-primary text-medication-primary-foreground hover:bg-medication-primary/90 rounded-lg"
@@ -139,34 +162,49 @@ const PatientDashboard = () => {
       {/* Today's Medications */}
       <Card className="bg-secondary/20">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-foreground">Today's Medications</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold text-foreground">आज की दवाएं (Today's Medicines)</CardTitle>
+            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+              <span className="text-lg">💊</span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {medications.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-lg text-muted-foreground">No medications added yet</p>
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🌿</span>
+              </div>
+              <p className="text-lg text-muted-foreground">कोई दवा नहीं मिली</p>
+              <p className="text-sm text-muted-foreground">No medications added yet</p>
             </div>
           ) : (
             <div className="space-y-4">
               {medications.map((med) => (
-                <div key={med.id} className="border rounded-lg p-4 bg-card">
+                <div key={med.id} className="border rounded-lg p-4 bg-card shadow-sm">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg">{med.name}</h3>
-                      <p className="text-muted-foreground">{med.dosage}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">💊</span>
+                        <h3 className="font-bold text-lg">{med.name}</h3>
+                      </div>
+                      <p className="text-muted-foreground font-medium">{med.dosage}</p>
                       <p className="text-sm text-muted-foreground">{med.frequency}</p>
                       {med.instructions && (
-                        <div className="flex items-center mt-2 text-warning">
-                          <AlertTriangle className="h-4 w-4 mr-1" />
-                          <span className="text-sm">{med.instructions}</span>
+                        <div className="flex items-center mt-2 p-2 bg-warning/10 rounded-md">
+                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
+                          <span className="text-sm text-warning">{med.instructions}</span>
                         </div>
                       )}
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center text-primary">
+                      <div className="flex items-center text-primary mb-2">
                         <Clock className="h-4 w-4 mr-1" />
-                        <span className="text-sm">{med.time || "No time set"}</span>
+                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
                       </div>
+                      <Button size="sm" variant="outline">
+                        ✓ Taken
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -177,11 +215,19 @@ const PatientDashboard = () => {
       </Card>
 
       {/* Ask Caretaker Help */}
-      <Card className="bg-secondary/20 cursor-pointer" onClick={requestCaretakerHelp}>
+      <Card className="bg-gradient-to-r from-primary/10 to-secondary/20 cursor-pointer border-primary/20" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
-          <div className="flex items-center">
-            <HelpCircle className="h-6 w-6 text-muted-foreground mr-3" />
-            <span className="text-lg text-muted-foreground">Trouble inputting? Ask caretaker.</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+                <span className="text-2xl">🤝</span>
+              </div>
+              <div>
+                <p className="text-lg font-medium text-foreground">सहायता चाहिए? (Need Help?)</p>
+                <p className="text-sm text-muted-foreground">Call your caretaker for assistance</p>
+              </div>
+            </div>
+            <HelpCircle className="h-6 w-6 text-primary" />
           </div>
         </CardContent>
       </Card>
@@ -195,14 +241,89 @@ const PatientDashboard = () => {
       case "symptoms":
         return (
           <div className="space-y-4">
+            {/* Header Image */}
+            <div className="relative h-32 rounded-lg overflow-hidden">
+              <img 
+                src={elderlyYoga} 
+                alt="Wellness and Health" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-2 left-2 text-white">
+                <h2 className="text-lg font-bold">Daily Wellness Tracker</h2>
+                <p className="text-sm">स्वास्थ्य ही धन है (Health is Wealth)</p>
+              </div>
+            </div>
+
+            {/* Vital Signs */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl">Daily Symptom Tracker</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Today's Vitals
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Coming soon...</p>
+                <div className="grid gap-4">
+                  {symptoms.map((symptom) => {
+                    const Icon = symptom.icon;
+                    return (
+                      <div key={symptom.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Icon className={`h-6 w-6 ${symptom.color}`} />
+                          <div>
+                            <h4 className="font-medium">{symptom.name}</h4>
+                            <p className="text-2xl font-bold">{symptom.value}</p>
+                          </div>
+                        </div>
+                        <Badge variant={symptom.status === "normal" ? "default" : "destructive"}>
+                          {symptom.status === "normal" ? "सामान्य" : "चेतावनी"}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
+
+            {/* Traditional Remedies */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">आयुर्वेदिक सुझाव (Ayurvedic Tips)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative h-24 rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src={ayurvedicHerbs} 
+                    alt="Ayurvedic Herbs" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <p className="text-sm">🌿 <strong>Turmeric Milk:</strong> Daily before bed for immunity</p>
+                  </div>
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <p className="text-sm">🧘 <strong>Pranayama:</strong> 10 minutes morning breathing</p>
+                  </div>
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <p className="text-sm">☕ <strong>Tulsi Tea:</strong> Twice daily for wellness</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <Thermometer className="h-5 w-5" />
+                <span className="text-sm">Record Temperature</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <Heart className="h-5 w-5" />
+                <span className="text-sm">Log BP</span>
+              </Button>
+            </div>
           </div>
         );
       case "ai-helper":
@@ -221,14 +342,130 @@ const PatientDashboard = () => {
       case "profile":
         return (
           <div className="space-y-4">
+            {/* Profile Header */}
             <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Profile Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Coming soon...</p>
+              <CardContent className="p-0">
+                <div className="relative h-32 rounded-t-lg overflow-hidden">
+                  <img 
+                    src={familyProfile} 
+                    alt="Family Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+                <div className="p-6 -mt-8 relative">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 border-4 border-background">
+                    <User className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h2 className="text-xl font-bold mb-1">राज कुमार शर्मा</h2>
+                  <p className="text-muted-foreground">Age: 68 • Patient ID: #12345</p>
+                  <Button size="sm" className="mt-3">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                </div>
               </CardContent>
             </Card>
+
+            {/* Personal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
+                    <Phone className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Phone</p>
+                      <p className="font-medium">+91 98765 43210</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Address</p>
+                      <p className="font-medium">123 Gandhi Nagar, Delhi</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Health Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Health Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative h-20 rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src={healthSymbols} 
+                    alt="Health Symbols" 
+                    className="w-full h-full object-cover opacity-50"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-success/10 rounded-lg">
+                    <p className="text-2xl font-bold text-success">7</p>
+                    <p className="text-sm text-muted-foreground">Days Med Compliant</p>
+                  </div>
+                  <div className="text-center p-3 bg-primary/10 rounded-lg">
+                    <p className="text-2xl font-bold text-primary">5</p>
+                    <p className="text-sm text-muted-foreground">Active Medications</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Family Contacts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-primary-foreground font-medium">S</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Sunita Sharma (Daughter)</p>
+                      <p className="text-sm text-muted-foreground">Primary Caretaker</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                      <span className="text-secondary-foreground font-medium">A</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Dr. Amit Patel</p>
+                      <p className="text-sm text-muted-foreground">Family Doctor</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Settings */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <Camera className="h-5 w-5" />
+                <span className="text-sm">Change Photo</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="text-sm">Emergency Info</span>
+              </Button>
+            </div>
           </div>
         );
       case "panic":
