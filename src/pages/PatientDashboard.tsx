@@ -653,7 +653,7 @@ const PatientDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-[80px]">
       {/* Simple Header */}
       <header className="bg-white border-b p-4 flex items-center justify-between">
         <Button
