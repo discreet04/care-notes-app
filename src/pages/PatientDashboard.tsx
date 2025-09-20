@@ -260,19 +260,14 @@ const PatientDashboard = () => {
             <p className="text-sm text-gray-600 mt-1">Yesterday's Reading: 140 mg/dl</p>
             <div className="flex gap-3 mt-4">
               <Button 
-                className="bg-yellow-400 text-gray-800 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500"
+                variant="ghost" 
+                className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
                 onClick={() => {
                   toast({
                     title: "Blood Pressure Check",
                     description: "Remember to check your blood pressure now!"
                   });
                 }}
-              >
-                Check now
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
               >
                 Remind me later
               </Button>
@@ -284,110 +279,50 @@ const PatientDashboard = () => {
       </div>
 
       {/* Today's Progress Cards */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-foreground">Today's Task</h2>
-          <span className="text-sm text-muted-foreground">1/5 Completed</span>
+      <div className="space-y-3">
+        {/* Morning Walk Task */}
+        <div className="bg-teal-200 text-teal-800 p-4 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-teal-800 rounded-full"></div>
+            <div>
+              <p className="font-semibold">Morning Walk</p>
+              <p className="text-sm text-teal-700">6:30 am - 7:00 am</p>
+            </div>
+          </div>
+          <div className="w-8 h-8 border-2 border-teal-800 rounded-full flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-teal-800 rounded-full"></div>
+          </div>
         </div>
-        
-        <div className="space-y-3">
-          {/* Morning Walk Task */}
-          <div className="bg-teal-200 text-teal-800 p-4 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-teal-800 rounded-full"></div>
-              <div>
-                <p className="font-semibold">Morning Walk</p>
-                <p className="text-sm text-teal-700">6:30 am - 7:00 am</p>
-              </div>
-            </div>
-            <div className="w-8 h-8 border-2 border-teal-800 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-teal-800 rounded-full"></div>
+
+        {/* Blood Pressure Check */}
+        <div className="bg-yellow-200 text-yellow-800 p-4 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-yellow-800 rounded-full"></div>
+            <div>
+              <p className="font-semibold">Check Blood Pressure</p>
+              <p className="text-sm text-yellow-700">11:00 am</p>
             </div>
           </div>
+          <div className="w-8 h-8 border-2 border-yellow-800 rounded-full flex items-center justify-center">
+            <Check className="h-4 w-4 text-yellow-800" />
+          </div>
+        </div>
 
-          {/* Blood Pressure Check */}
-          <div className="bg-yellow-200 text-yellow-800 p-4 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-yellow-800 rounded-full"></div>
-              <div>
-                <p className="font-semibold">Check Blood Pressure</p>
-                <p className="text-sm text-yellow-700">11:00 am</p>
-              </div>
-            </div>
-            <div className="w-8 h-8 border-2 border-yellow-800 rounded-full flex items-center justify-center">
-              <Check className="h-4 w-4 text-yellow-800" />
+        {/* Call Family */}
+        <div className="bg-blue-200 text-blue-800 p-4 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-blue-800 rounded-full"></div>
+            <div>
+              <p className="font-semibold">Call Grandchildren</p>
+              <p className="text-sm text-blue-700">3:00 pm</p>
             </div>
           </div>
-
-          {/* Call Family */}
-          <div className="bg-blue-200 text-blue-800 p-4 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-800 rounded-full"></div>
-              <div>
-                <p className="font-semibold">Call Grandchildren</p>
-                <p className="text-sm text-blue-700">3:00 pm</p>
-              </div>
-            </div>
-            <div className="w-8 h-8 border-2 border-blue-800 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-blue-800 rounded-full"></div>
-            </div>
+          <div className="w-8 h-8 border-2 border-blue-800 rounded-full flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-blue-800 rounded-full"></div>
           </div>
         </div>
       </div>
-
-      {/* Health Progress Section */}
-      <div>
-        <h2 className="text-xl font-bold text-foreground mb-4">My Tasks</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Medication Progress */}
-          <Card className="bg-teal-200 p-6 text-teal-800 border-none relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <ProgressCircle progress={72} color="teal" size="md" className="text-teal-800">
-                  <span className="text-teal-800 font-bold text-lg">72%</span>
-                </ProgressCircle>
-                <Pill className="h-8 w-8 text-teal-700" />
-              </div>
-              <h3 className="text-lg font-semibold mb-1">Medication</h3>
-              <p className="text-sm text-teal-700">{medications.length} Tasks</p>
-              <Button
-                className="mt-3 bg-teal-300 text-teal-800 border-teal-400 hover:bg-teal-400 rounded-full text-sm px-4 py-1"
-                onClick={() => setShowMedicationForm(true)}
-              >
-                Add Task →
-              </Button>
-            </div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full"></div>
-          </Card>
-
-          {/* Fitness Progress */}
-          <Card className="bg-yellow-200 p-6 text-yellow-800 border-none relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <ProgressCircle progress={50} color="yellow" size="md" className="text-yellow-800">
-                  <span className="text-yellow-800 font-bold text-lg">50%</span>
-                </ProgressCircle>
-                <Activity className="h-8 w-8 text-yellow-700" />
-              </div>
-              <h3 className="text-lg font-semibold mb-1">Fitness</h3>
-              <p className="text-sm text-yellow-700">2 Tasks</p>
-              <Button
-                className="mt-3 bg-yellow-300 text-yellow-800 border-yellow-400 hover:bg-yellow-400 rounded-full text-sm px-4 py-1"
-                onClick={() => {
-                  toast({
-                    title: "Fitness Tracker",
-                    description: "Keep up the good work with your daily activities!"
-                  });
-                }}
-              >
-                View Tasks →
-              </Button>
-            </div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full"></div>
-          </Card>
-        </div>
-      </div>
-
+      
       {/* Ask Caretaker Help */}
       <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
@@ -401,7 +336,9 @@ const PatientDashboard = () => {
                 <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
               </div>
             </div>
-            <HelpCircle className="h-6 w-6 text-yellow-500" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-yellow-500">
+              <Phone className="h-6 w-6" />
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -412,7 +349,7 @@ const PatientDashboard = () => {
     switch (activeTab) {
       case "home":
         return renderHomeContent();
-      case "symptoms":
+      case "wellness":
         return (
           <div className="space-y-4">
             {/* Header Image */}
@@ -491,7 +428,7 @@ const PatientDashboard = () => {
             <div className="grid grid-cols-2 gap-3">
               <Button variant="outline" className="h-16 flex-col gap-1">
                 <Thermometer className="h-5 w-5" />
-                <span className="text-sm">{t('recordTemperature')}</span>
+                <span className="text-sm">Log Temperature</span>
               </Button>
               <Button variant="outline" className="h-16 flex-col gap-1">
                 <Heart className="h-5 w-5" />
@@ -576,7 +513,7 @@ const PatientDashboard = () => {
                   <div className="text-center p-3 bg-blue-100 rounded-lg">
                     <p className="text-2xl font-bold text-blue-700">5</p>
                     <p className="text-sm text-gray-500">Active Medications</p>
-                  </div>
+                  </d>
                 </div>
               </CardContent>
             </Card>
@@ -666,7 +603,7 @@ const PatientDashboard = () => {
         </Button>
         <h1 className="text-xl font-bold text-gray-800">
           {t(activeTab === "home" ? "home" : 
-             activeTab === "symptoms" ? "symptoms" : 
+             activeTab === "wellness" ? "wellness" : 
              activeTab === "ai-helper" ? "aiHelper" :
              activeTab === "profile" ? "profile" : "panic")}
         </h1>
