@@ -1,13 +1,13 @@
 import {
   Home,
-  Pill,
   Activity,
+  MessageCircle,
   User,
   AlertTriangle,
-  Bot
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -16,6 +16,15 @@ interface BottomNavigationProps {
 
 const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
   const { t } = useLanguage();
+
+  const navItems = [
+    { id: "home", icon: Home, label: "Home" },
+    { id: "symptoms", icon: Activity, label: "Symptoms" },
+    { id: "ai-helper", icon: MessageCircle, label: "AI Helper" },
+    { id: "profile", icon: User, label: "Profile" },
+    { id: "panic", icon: AlertTriangle, label: "Panic" },
+  ];
+
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-gray-100 shadow-lg p-2"
@@ -26,56 +35,27 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
       }}
     >
       <nav className="flex justify-around items-center h-full">
-        <Button
-          variant="ghost"
-          onClick={() => onTabChange("home")}
-          className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
-            activeTab === "home" ? "bg-primary/10 text-primary" : "text-gray-500"
-          }`}
-        >
-          <Home className="h-6 w-6" />
-          <span className="text-xs font-medium mt-1">Home</span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => onTabChange("wellness")}
-          className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
-            activeTab === "wellness" ? "bg-primary/10 text-primary" : "text-gray-500"
-          }`}
-        >
-          <Activity className="h-6 w-6" />
-          <span className="text-xs font-medium mt-1">Wellness</span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => onTabChange("ai-helper")}
-          className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
-            activeTab === "ai-helper" ? "bg-primary/10 text-primary" : "text-gray-500"
-          }`}
-        >
-          <Bot className="h-6 w-6" />
-          <span className="text-xs font-medium mt-1">AI Helper</span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => onTabChange("profile")}
-          className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
-            activeTab === "profile" ? "bg-primary/10 text-primary" : "text-gray-500"
-          }`}
-        >
-          <User className="h-6 w-6" />
-          <span className="text-xs font-medium mt-1">Profile</span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => onTabChange("panic")}
-          className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
-            activeTab === "panic" ? "bg-destructive/10 text-destructive" : "text-gray-500"
-          }`}
-        >
-          <AlertTriangle className="h-6 w-6" />
-          <span className="text-xs font-medium mt-1">Panic</span>
-        </Button>
+        <TooltipProvider>
+          {navItems.map((item) => (
+            <Tooltip key={item.id}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => onTabChange(item.id)}
+                  className={`flex-1 flex flex-col items-center p-2 rounded-xl transition-colors duration-200 ${
+                    activeTab === item.id ? "bg-primary/10 text-primary" : "text-gray-500"
+                  }`}
+                >
+                  <item.icon className="h-6 w-6" />
+                  <span className="sr-only">{item.label}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t(item.id)}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
       </nav>
     </div>
   );
