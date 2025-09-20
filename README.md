@@ -1,10 +1,5 @@
-## Project info
-
-**URL**: https://lovable.dev/projects/0550104f-7670-40e7-8e17-14b6d3a53c05
 
 **Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
