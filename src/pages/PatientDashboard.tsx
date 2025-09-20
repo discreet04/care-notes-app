@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Sidebar from "@/components/Sidebar";
 import BottomNavigation from "@/components/BottomNavigation";
 import LanguageToggle from "@/components/LanguageToggle";
-import AIChat from "@/components/AIChat";
+import EnhancedAIChat from "@/components/AIChat";
 import ProgressCircle from "@/components/ui/progress-circle";
 import { calculateTimeUntilDose, getMedicationStatus } from "@/utils/medicationTimer";
 import elderlyYoga from "@/assets/elderly-yoga.jpg";
@@ -491,7 +491,7 @@ const PatientDashboard = () => {
           </div>
         );
       case "ai-helper":
-        return <AIChat />;
+        return <EnhancedAIChat />;
       case "profile":
         return (
           <div className="space-y-4">
