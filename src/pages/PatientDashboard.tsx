@@ -18,6 +18,7 @@ import elderlyYoga from "@/assets/elderly-yoga.jpg";
 import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
 import familyProfile from "@/assets/family-profile.jpg";
 import healthSymbols from "@/assets/health-symbols.jpg";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PatientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -166,13 +167,22 @@ const PatientDashboard = () => {
               <Pill className="h-6 w-6" />
               {t('todaysMedications')}
             </CardTitle>
-            <Button
-              onClick={() => setShowMedicationForm(!showMedicationForm)}
-              className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4 py-2"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {t('addNewMedication')}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => setShowMedicationForm(!showMedicationForm)}
+                    className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4 py-2"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">{t('addNewMedication')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('addNewMedication')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardHeader>
         <CardContent>
