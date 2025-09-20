@@ -82,7 +82,7 @@ const PatientDashboard = () => {
   };
 
   const renderHomeContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-[80px]">
       {/* Add New Medication Form */}
       {showMedicationForm && (
         <Card className="border-2 border-teal-200 bg-teal-50">
@@ -277,51 +277,6 @@ const PatientDashboard = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-16 -mt-16"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
       </div>
-
-      {/* Today's Progress Cards */}
-      <div className="space-y-3">
-        {/* Morning Walk Task */}
-        <div className="bg-teal-200 text-teal-800 p-4 rounded-2xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-teal-800 rounded-full"></div>
-            <div>
-              <p className="font-semibold">Morning Walk</p>
-              <p className="text-sm text-teal-700">6:30 am - 7:00 am</p>
-            </div>
-          </div>
-          <div className="w-8 h-8 border-2 border-teal-800 rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-teal-800 rounded-full"></div>
-          </div>
-        </div>
-
-        {/* Blood Pressure Check */}
-        <div className="bg-yellow-200 text-yellow-800 p-4 rounded-2xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-yellow-800 rounded-full"></div>
-            <div>
-              <p className="font-semibold">Check Blood Pressure</p>
-              <p className="text-sm text-yellow-700">11:00 am</p>
-            </div>
-          </div>
-          <div className="w-8 h-8 border-2 border-yellow-800 rounded-full flex items-center justify-center">
-            <Check className="h-4 w-4 text-yellow-800" />
-          </div>
-        </div>
-
-        {/* Call Family */}
-        <div className="bg-blue-200 text-blue-800 p-4 rounded-2xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-blue-800 rounded-full"></div>
-            <div>
-              <p className="font-semibold">Call Grandchildren</p>
-              <p className="text-sm text-blue-700">3:00 pm</p>
-            </div>
-          </div>
-          <div className="w-8 h-8 border-2 border-blue-800 rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 border-2 border-blue-800 rounded-full"></div>
-          </div>
-        </div>
-      </div>
       
       {/* Ask Caretaker Help */}
       <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
@@ -351,7 +306,7 @@ const PatientDashboard = () => {
         return renderHomeContent();
       case "wellness":
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 pb-[80px]">
             {/* Header Image */}
             <div className="relative h-32 rounded-lg overflow-hidden">
               <img 
@@ -441,7 +396,7 @@ const PatientDashboard = () => {
         return <EnhancedAIChat />;
       case "profile":
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 pb-[80px]">
             {/* Profile Header */}
             <Card>
               <CardContent className="p-0">
@@ -568,6 +523,270 @@ const PatientDashboard = () => {
             </div>
           </div>
         );
+      case "ai-helper":
+        return <EnhancedAIChat />;
+      case "profile":
+        return (
+          <div className="space-y-4 pb-[80px]">
+            {/* Profile Header */}
+            <Card>
+              <CardContent className="p-0">
+                <div className="relative h-32 rounded-t-lg overflow-hidden">
+                  <img 
+                    src={familyProfile} 
+                    alt="Family Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+                <div className="p-6 -mt-8 relative">
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 border-4 border-gray-200">
+                    <User className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
+                  <p className="text-gray-500">Age: 68 • Patient ID: #12345</p>
+                  <Button size="sm" className="mt-3">
+                    <Edit className="h-4 w-4 mr-2" />
+                    {t('editProfile')}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Personal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">{t('personalInfo')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <Phone className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">{t('phone')}</p>
+                      <p className="font-medium">+91 98765 43210</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <MapPin className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">{t('address')}</p>
+                      <p className="font-medium">123 Gandhi Nagar, Delhi</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Health Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Health Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative h-20 rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src={healthSymbols} 
+                    alt="Health Symbols" 
+                    className="w-full h-full object-cover opacity-50"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-green-100 rounded-lg">
+                    <p className="text-2xl font-bold text-green-700">7</p>
+                    <p className="text-sm text-gray-500">Days Med Compliant</p>
+                  </div>
+                  <div className="text-center p-3 bg-blue-100 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-700">5</p>
+                    <p className="text-sm text-gray-500">Active Medications</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Family Contacts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium">S</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Sunita Sharma (Daughter)</p>
+                      <p className="text-sm text-gray-500">Primary Caretaker</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-gray-800 font-medium">A</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Dr. Amit Patel</p>
+                      <p className="text-sm text-gray-500">Family Doctor</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Settings */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <Camera className="h-5 w-5" />
+                <span className="text-sm">Change Photo</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="text-sm">Emergency Info</span>
+              </Button>
+            </div>
+          </div>
+        );
+      case "ai-helper":
+        return <EnhancedAIChat />;
+      case "profile":
+        return (
+          <div className="space-y-4 pb-[80px]">
+            {/* Profile Header */}
+            <Card>
+              <CardContent className="p-0">
+                <div className="relative h-32 rounded-t-lg overflow-hidden">
+                  <img 
+                    src={familyProfile} 
+                    alt="Family Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+                <div className="p-6 -mt-8 relative">
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 border-4 border-gray-200">
+                    <User className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
+                  <p className="text-gray-500">Age: 68 • Patient ID: #12345</p>
+                  <Button size="sm" className="mt-3">
+                    <Edit className="h-4 w-4 mr-2" />
+                    {t('editProfile')}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Personal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">{t('personalInfo')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <Phone className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">{t('phone')}</p>
+                      <p className="font-medium">+91 98765 43210</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <MapPin className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-gray-500">{t('address')}</p>
+                      <p className="font-medium">123 Gandhi Nagar, Delhi</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Health Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Health Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="relative h-20 rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src={healthSymbols} 
+                    alt="Health Symbols" 
+                    className="w-full h-full object-cover opacity-50"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-green-100 rounded-lg">
+                    <p className="text-2xl font-bold text-green-700">7</p>
+                    <p className="text-sm text-gray-500">Days Med Compliant</p>
+                  </div>
+                  <div className="text-center p-3 bg-blue-100 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-700">5</p>
+                    <p className="text-sm text-gray-500">Active Medications</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Family Contacts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium">S</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Sunita Sharma (Daughter)</p>
+                      <p className="text-sm text-gray-500">Primary Caretaker</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-gray-800 font-medium">A</span>
+                    </div>
+                    <div>
+                      <p className="font-medium">Dr. Amit Patel</p>
+                      <p className="text-sm text-gray-500">Family Doctor</p>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Settings */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <Camera className="h-5 w-5" />
+                <span className="text-sm">Change Photo</span>
+              </Button>
+              <Button variant="outline" className="h-16 flex-col gap-1">
+                <AlertTriangle className="h-5 w-5" />
+                <span className="text-sm">Emergency Info</span>
+              </Button>
+            </div>
+          </div>
+        );
+      case "ai-helper":
+        return <EnhancedAIChat />;
       case "panic":
         return (
           <div className="space-y-4">
