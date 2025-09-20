@@ -18,6 +18,7 @@ import elderlyYoga from "@/assets/elderly-yoga.jpg";
 import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
 import familyProfile from "@/assets/family-profile.jpg";
 import healthSymbols from "@/assets/health-symbols.jpg";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PatientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,9 +26,9 @@ const PatientDashboard = () => {
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [medications, setMedications] = useState<any[]>([]);
   const [symptoms, setSymptoms] = useState([
-    { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-success" },
-    { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-primary" },
-    { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-success" }
+    { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-green-600" },
+    { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-blue-600" },
+    { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-green-600" }
   ]);
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -84,9 +85,9 @@ const PatientDashboard = () => {
     <div className="space-y-6">
       {/* Add New Medication Form */}
       {showMedicationForm && (
-        <Card className="border-2 border-health-teal/20 bg-health-teal/5">
+        <Card className="border-2 border-teal-200 bg-teal-50">
           <CardHeader>
-            <CardTitle className="text-lg text-health-teal">{t('addNewMedicationTitle')}</CardTitle>
+            <CardTitle className="text-lg text-teal-700">{t('addNewMedicationTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -142,7 +143,7 @@ const PatientDashboard = () => {
             <div className="flex gap-3 pt-4">
               <Button 
                 onClick={handleAddMedication} 
-                className="bg-health-teal text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-health-teal/90"
+                className="bg-teal-600 text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-teal-700"
               >
                 {t('addMedication')}
               </Button>
@@ -159,27 +160,36 @@ const PatientDashboard = () => {
       )}
 
       {/* Today's Medications List - Priority Section */}
-      <Card className="bg-gradient-to-br from-health-teal/10 to-health-teal/5 border-health-teal/20">
+      <Card className="bg-gradient-to-br from-teal-50 to-teal-50 border-teal-200">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl text-health-teal flex items-center gap-3">
+            <CardTitle className="text-xl text-teal-700 flex items-center gap-3">
               <Pill className="h-6 w-6" />
               {t('todaysMedications')}
             </CardTitle>
-            <Button
-              onClick={() => setShowMedicationForm(!showMedicationForm)}
-              className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4 py-2"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {t('addNewMedication')}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => setShowMedicationForm(!showMedicationForm)}
+                    className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4 py-2"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">{t('addNewMedication')}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('addNewMedication')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardHeader>
         <CardContent>
           {medications.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-health-teal/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Pill className="h-8 w-8 text-health-teal" />
+              <div className="w-16 h-16 bg-teal-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Pill className="h-8 w-8 text-teal-700" />
               </div>
               <p className="text-lg text-muted-foreground mb-2">{t('noMedicationsYet')}</p>
               <p className="text-sm text-muted-foreground">Add your first medication to get started</p>
@@ -187,11 +197,11 @@ const PatientDashboard = () => {
           ) : (
             <div className="space-y-4">
               {medications.map((med) => (
-                <div key={med.id} className="bg-white rounded-xl p-4 border border-health-teal/20 shadow-sm">
+                <div key={med.id} className="bg-white rounded-xl p-4 border border-teal-200 shadow-sm">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-health-teal rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center">
                           <Pill className="h-5 w-5 text-white" />
                         </div>
                         <h3 className="font-bold text-lg text-foreground">{med.name}</h3>
@@ -199,14 +209,14 @@ const PatientDashboard = () => {
                       <p className="text-muted-foreground font-medium text-base">{med.dosage}</p>
                       <p className="text-sm text-muted-foreground">{med.frequency}</p>
                       {med.instructions && (
-                        <div className="flex items-center mt-3 p-3 bg-warning/10 rounded-lg border-l-4 border-warning">
-                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
-                          <span className="text-sm text-warning font-medium">{med.instructions}</span>
+                        <div className="flex items-center mt-3 p-3 bg-orange-100 rounded-lg border-l-4 border-orange-500">
+                          <AlertTriangle className="h-4 w-4 mr-2 text-orange-500" />
+                          <span className="text-sm text-orange-600 font-medium">{med.instructions}</span>
                         </div>
                       )}
                     </div>
                     <div className="text-right ml-4">
-                      <div className="flex items-center text-health-teal mb-2">
+                      <div className="flex items-center text-teal-700 mb-2">
                         <Clock className="h-4 w-4 mr-1" />
                         <span className="text-sm font-medium">{med.time || "No time set"}</span>
                       </div>
@@ -221,7 +231,7 @@ const PatientDashboard = () => {
                       )}
                       <Button 
                         size="sm" 
-                        className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4"
+                        className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4"
                       >
                         ✓ {t('taken')}
                       </Button>
@@ -235,22 +245,22 @@ const PatientDashboard = () => {
       </Card>
 
       {/* Welcome Header with modern design */}
-      <div className="bg-gradient-to-br from-health-coral to-primary p-6 rounded-2xl text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-rose-200 to-blue-200 p-6 rounded-2xl text-gray-800 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-1">{t('greeting')}</h1>
-              <p className="text-white/90 text-lg">{t('subtitle')}</p>
+              <p className="text-gray-700 text-lg">{t('subtitle')}</p>
             </div>
             <div className="text-4xl">🙏</div>
           </div>
           <div className="mt-6">
-            <p className="text-white/80 text-sm mb-3">It's time to Check Your</p>
+            <p className="text-gray-700 text-sm mb-3">It's time to Check Your</p>
             <p className="text-xl font-semibold">Blood Pressure</p>
-            <p className="text-sm text-white/70 mt-1">Yesterday's Reading: 140 mg/dl</p>
+            <p className="text-sm text-gray-600 mt-1">Yesterday's Reading: 140 mg/dl</p>
             <div className="flex gap-3 mt-4">
               <Button 
-                className="bg-health-yellow text-secondary font-semibold px-6 py-2 rounded-full hover:bg-health-yellow/90"
+                className="bg-yellow-400 text-gray-800 font-semibold px-6 py-2 rounded-full hover:bg-yellow-500"
                 onClick={() => {
                   toast({
                     title: "Blood Pressure Check",
@@ -262,15 +272,15 @@ const PatientDashboard = () => {
               </Button>
               <Button 
                 variant="ghost" 
-                className="text-white border border-white/30 px-6 py-2 rounded-full hover:bg-white/10"
+                className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
               >
                 Remind me later
               </Button>
             </div>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-16 -mt-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
       </div>
 
       {/* Today's Progress Cards */}
@@ -282,44 +292,44 @@ const PatientDashboard = () => {
         
         <div className="space-y-3">
           {/* Morning Walk Task */}
-          <div className="bg-health-teal text-white p-4 rounded-2xl flex items-center justify-between">
+          <div className="bg-teal-200 text-teal-800 p-4 rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-teal-800 rounded-full"></div>
               <div>
                 <p className="font-semibold">Morning Walk</p>
-                <p className="text-sm text-white/80">6:30 am - 7:00 am</p>
+                <p className="text-sm text-teal-700">6:30 am - 7:00 am</p>
               </div>
             </div>
-            <div className="w-8 h-8 border-2 border-white rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-white rounded-full"></div>
+            <div className="w-8 h-8 border-2 border-teal-800 rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-teal-800 rounded-full"></div>
             </div>
           </div>
 
           {/* Blood Pressure Check */}
-          <div className="bg-health-yellow text-secondary p-4 rounded-2xl flex items-center justify-between">
+          <div className="bg-yellow-200 text-yellow-800 p-4 rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-secondary rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-800 rounded-full"></div>
               <div>
                 <p className="font-semibold">Check Blood Pressure</p>
-                <p className="text-sm text-secondary/70">11:00 am</p>
+                <p className="text-sm text-yellow-700">11:00 am</p>
               </div>
             </div>
-            <div className="w-8 h-8 border-2 border-secondary rounded-full flex items-center justify-center">
-              <Check className="h-4 w-4 text-secondary" />
+            <div className="w-8 h-8 border-2 border-yellow-800 rounded-full flex items-center justify-center">
+              <Check className="h-4 w-4 text-yellow-800" />
             </div>
           </div>
 
           {/* Call Family */}
-          <div className="bg-health-blue text-white p-4 rounded-2xl flex items-center justify-between">
+          <div className="bg-blue-200 text-blue-800 p-4 rounded-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-blue-800 rounded-full"></div>
               <div>
                 <p className="font-semibold">Call Grandchildren</p>
-                <p className="text-sm text-white/80">3:00 pm</p>
+                <p className="text-sm text-blue-700">3:00 pm</p>
               </div>
             </div>
-            <div className="w-8 h-8 border-2 border-white rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-white rounded-full"></div>
+            <div className="w-8 h-8 border-2 border-blue-800 rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 border-2 border-blue-800 rounded-full"></div>
             </div>
           </div>
         </div>
@@ -330,18 +340,18 @@ const PatientDashboard = () => {
         <h2 className="text-xl font-bold text-foreground mb-4">My Tasks</h2>
         <div className="grid grid-cols-2 gap-4">
           {/* Medication Progress */}
-          <Card className="bg-health-teal p-6 text-white border-none relative overflow-hidden">
+          <Card className="bg-teal-200 p-6 text-teal-800 border-none relative overflow-hidden">
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
-                <ProgressCircle progress={72} color="teal" size="md" className="text-white">
-                  <span className="text-white font-bold text-lg">72%</span>
+                <ProgressCircle progress={72} color="teal" size="md" className="text-teal-800">
+                  <span className="text-teal-800 font-bold text-lg">72%</span>
                 </ProgressCircle>
-                <Pill className="h-8 w-8 text-white/80" />
+                <Pill className="h-8 w-8 text-teal-700" />
               </div>
               <h3 className="text-lg font-semibold mb-1">Medication</h3>
-              <p className="text-sm text-white/80">{medications.length} Tasks</p>
+              <p className="text-sm text-teal-700">{medications.length} Tasks</p>
               <Button
-                className="mt-3 bg-white/20 text-white border-white/30 hover:bg-white/30 rounded-full text-sm px-4 py-1"
+                className="mt-3 bg-teal-300 text-teal-800 border-teal-400 hover:bg-teal-400 rounded-full text-sm px-4 py-1"
                 onClick={() => setShowMedicationForm(true)}
               >
                 Add Task →
@@ -351,18 +361,18 @@ const PatientDashboard = () => {
           </Card>
 
           {/* Fitness Progress */}
-          <Card className="bg-health-yellow p-6 text-secondary border-none relative overflow-hidden">
+          <Card className="bg-yellow-200 p-6 text-yellow-800 border-none relative overflow-hidden">
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
-                <ProgressCircle progress={50} color="yellow" size="md" className="text-secondary">
-                  <span className="text-secondary font-bold text-lg">50%</span>
+                <ProgressCircle progress={50} color="yellow" size="md" className="text-yellow-800">
+                  <span className="text-yellow-800 font-bold text-lg">50%</span>
                 </ProgressCircle>
-                <Activity className="h-8 w-8 text-secondary/80" />
+                <Activity className="h-8 w-8 text-yellow-700" />
               </div>
               <h3 className="text-lg font-semibold mb-1">Fitness</h3>
-              <p className="text-sm text-secondary/80">2 Tasks</p>
+              <p className="text-sm text-yellow-700">2 Tasks</p>
               <Button
-                className="mt-3 bg-secondary/20 text-secondary border-secondary/30 hover:bg-secondary/30 rounded-full text-sm px-4 py-1"
+                className="mt-3 bg-yellow-300 text-yellow-800 border-yellow-400 hover:bg-yellow-400 rounded-full text-sm px-4 py-1"
                 onClick={() => {
                   toast({
                     title: "Fitness Tracker",
@@ -373,17 +383,17 @@ const PatientDashboard = () => {
                 View Tasks →
               </Button>
             </div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-secondary/10 rounded-full"></div>
+            <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full"></div>
           </Card>
         </div>
       </div>
 
       {/* Ask Caretaker Help */}
-      <Card className="bg-gradient-to-br from-health-yellow/20 to-health-yellow/10 border-health-yellow/30 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
+      <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-health-yellow to-warning rounded-2xl flex items-center justify-center mr-4 shadow-sm">
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-2xl flex items-center justify-center mr-4 shadow-sm">
                 <span className="text-2xl">🤝</span>
               </div>
               <div>
@@ -391,7 +401,7 @@ const PatientDashboard = () => {
                 <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
               </div>
             </div>
-            <HelpCircle className="h-6 w-6 text-health-yellow" />
+            <HelpCircle className="h-6 w-6 text-yellow-500" />
           </div>
         </CardContent>
       </Card>
@@ -423,7 +433,7 @@ const PatientDashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
+                  <Activity className="h-5 w-5 text-blue-600" />
                   {t('todaysVitals')}
                 </CardTitle>
               </CardHeader>
@@ -432,7 +442,7 @@ const PatientDashboard = () => {
                   {symptoms.map((symptom) => {
                     const Icon = symptom.icon;
                     return (
-                      <div key={symptom.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                      <div key={symptom.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                         <div className="flex items-center gap-3">
                           <Icon className={`h-6 w-6 ${symptom.color}`} />
                           <div>
@@ -464,13 +474,13 @@ const PatientDashboard = () => {
                   />
                 </div>
                 <div className="space-y-3">
-                  <div className="p-3 bg-primary/10 rounded-lg">
+                  <div className="p-3 bg-blue-100 rounded-lg">
                     <p className="text-sm">🌿 <strong>{t('turmericMilk')}</strong></p>
                   </div>
-                  <div className="p-3 bg-primary/10 rounded-lg">
+                  <div className="p-3 bg-blue-100 rounded-lg">
                     <p className="text-sm">🧘 <strong>{t('pranayama')}</strong></p>
                   </div>
-                  <div className="p-3 bg-primary/10 rounded-lg">
+                  <div className="p-3 bg-blue-100 rounded-lg">
                     <p className="text-sm">☕ <strong>{t('tulsiTea')}</strong></p>
                   </div>
                 </div>
@@ -507,11 +517,11 @@ const PatientDashboard = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
                 <div className="p-6 -mt-8 relative">
-                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 border-4 border-background">
-                    <User className="h-8 w-8 text-primary-foreground" />
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 border-4 border-gray-200">
+                    <User className="h-8 w-8 text-white" />
                   </div>
                   <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
-                  <p className="text-muted-foreground">Age: 68 • Patient ID: #12345</p>
+                  <p className="text-gray-500">Age: 68 • Patient ID: #12345</p>
                   <Button size="sm" className="mt-3">
                     <Edit className="h-4 w-4 mr-2" />
                     {t('editProfile')}
@@ -527,17 +537,17 @@ const PatientDashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
-                    <Phone className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <Phone className="h-5 w-5 text-blue-600" />
                     <div>
-                      <p className="text-sm text-muted-foreground">{t('phone')}</p>
+                      <p className="text-sm text-gray-500">{t('phone')}</p>
                       <p className="font-medium">+91 98765 43210</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-secondary/20 rounded-lg">
-                    <MapPin className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
+                    <MapPin className="h-5 w-5 text-blue-600" />
                     <div>
-                      <p className="text-sm text-muted-foreground">{t('address')}</p>
+                      <p className="text-sm text-gray-500">{t('address')}</p>
                       <p className="font-medium">123 Gandhi Nagar, Delhi</p>
                     </div>
                   </div>
@@ -559,13 +569,13 @@ const PatientDashboard = () => {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-3 bg-success/10 rounded-lg">
-                    <p className="text-2xl font-bold text-success">7</p>
-                    <p className="text-sm text-muted-foreground">Days Med Compliant</p>
+                  <div className="text-center p-3 bg-green-100 rounded-lg">
+                    <p className="text-2xl font-bold text-green-700">7</p>
+                    <p className="text-sm text-gray-500">Days Med Compliant</p>
                   </div>
-                  <div className="text-center p-3 bg-primary/10 rounded-lg">
-                    <p className="text-2xl font-bold text-primary">5</p>
-                    <p className="text-sm text-muted-foreground">Active Medications</p>
+                  <div className="text-center p-3 bg-blue-100 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-700">5</p>
+                    <p className="text-sm text-gray-500">Active Medications</p>
                   </div>
                 </div>
               </CardContent>
@@ -577,28 +587,28 @@ const PatientDashboard = () => {
                 <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-primary-foreground font-medium">S</span>
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium">S</span>
                     </div>
                     <div>
                       <p className="font-medium">Sunita Sharma (Daughter)</p>
-                      <p className="text-sm text-muted-foreground">Primary Caretaker</p>
+                      <p className="text-sm text-gray-500">Primary Caretaker</p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline">
                     <Phone className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-                      <span className="text-secondary-foreground font-medium">A</span>
+                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-gray-800 font-medium">A</span>
                     </div>
                     <div>
                       <p className="font-medium">Dr. Amit Patel</p>
-                      <p className="text-sm text-muted-foreground">Family Doctor</p>
+                      <p className="text-sm text-gray-500">Family Doctor</p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline">
@@ -624,12 +634,12 @@ const PatientDashboard = () => {
       case "panic":
         return (
           <div className="space-y-4">
-            <Card className="border-destructive">
+            <Card className="border-red-400">
               <CardHeader>
-                <CardTitle className="text-xl text-destructive">Emergency Panic Button</CardTitle>
+                <CardTitle className="text-xl text-red-500">Emergency Panic Button</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button className="w-full bg-destructive text-destructive-foreground btn-elderly">
+                <Button className="w-full bg-red-400 text-white btn-elderly">
                   <AlertTriangle className="h-6 w-6 mr-2" />
                   Emergency Help
                 </Button>
@@ -643,9 +653,9 @@ const PatientDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Simple Header */}
-      <header className="bg-card border-b p-4 flex items-center justify-between">
+      <header className="bg-white border-b p-4 flex items-center justify-between">
         <Button
           variant="ghost"
           size="sm"
@@ -654,7 +664,7 @@ const PatientDashboard = () => {
         >
           <Menu className="h-6 w-6" />
         </Button>
-        <h1 className="text-xl font-bold text-foreground">
+        <h1 className="text-xl font-bold text-gray-800">
           {t(activeTab === "home" ? "home" : 
              activeTab === "symptoms" ? "symptoms" : 
              activeTab === "ai-helper" ? "aiHelper" :
