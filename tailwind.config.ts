@@ -56,6 +56,18 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        health: {
+          coral: "hsl(var(--health-coral))",
+          teal: "hsl(var(--health-teal))",
+          yellow: "hsl(var(--health-yellow))",
+          blue: "hsl(var(--health-blue))",
+          purple: "hsl(var(--health-purple))",
+        },
+        progress: {
+          medication: "hsl(var(--progress-medication))",
+          fitness: "hsl(var(--progress-fitness))",
+          vitals: "hsl(var(--progress-vitals))",
+        },
         "medication-primary": {
           DEFAULT: "hsl(var(--medication-primary))",
           foreground: "hsl(var(--medication-primary-foreground))",
