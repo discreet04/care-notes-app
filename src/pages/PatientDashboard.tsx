@@ -82,6 +82,158 @@ const PatientDashboard = () => {
 
   const renderHomeContent = () => (
     <div className="space-y-6">
+      {/* Add New Medication Form */}
+      {showMedicationForm && (
+        <Card className="border-2 border-health-teal/20 bg-health-teal/5">
+          <CardHeader>
+            <CardTitle className="text-lg text-health-teal">{t('addNewMedicationTitle')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="name" className="text-base font-medium">{t('medicationName')}</Label>
+              <Input
+                id="name"
+                placeholder={t('medicationNamePlaceholder')}
+                value={medicationForm.name}
+                onChange={(e) => setMedicationForm({ ...medicationForm, name: e.target.value })}
+                className="elderly-focus text-base p-3 rounded-xl border-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="dosage" className="text-base font-medium">{t('dosage')}</Label>
+              <Input
+                id="dosage"
+                placeholder={t('dosagePlaceholder')}
+                value={medicationForm.dosage}
+                onChange={(e) => setMedicationForm({ ...medicationForm, dosage: e.target.value })}
+                className="elderly-focus text-base p-3 rounded-xl border-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="frequency" className="text-base font-medium">{t('frequency')}</Label>
+              <Input
+                id="frequency"
+                placeholder={t('frequencyPlaceholder')}
+                value={medicationForm.frequency}
+                onChange={(e) => setMedicationForm({ ...medicationForm, frequency: e.target.value })}
+                className="elderly-focus text-base p-3 rounded-xl border-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="time" className="text-base font-medium">{t('reminderTime')}</Label>
+              <Input
+                id="time"
+                type="time"
+                value={medicationForm.time}
+                onChange={(e) => setMedicationForm({ ...medicationForm, time: e.target.value })}
+                className="elderly-focus text-base p-3 rounded-xl border-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="instructions" className="text-base font-medium">{t('instructions')}</Label>
+              <Textarea
+                id="instructions"
+                placeholder={t('instructionsPlaceholder')}
+                value={medicationForm.instructions}
+                onChange={(e) => setMedicationForm({ ...medicationForm, instructions: e.target.value })}
+                className="elderly-focus text-base p-3 rounded-xl border-2 min-h-[100px]"
+              />
+            </div>
+            <div className="flex gap-3 pt-4">
+              <Button 
+                onClick={handleAddMedication} 
+                className="bg-health-teal text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-health-teal/90"
+              >
+                {t('addMedication')}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowMedicationForm(false)}
+                className="px-8 py-3 rounded-xl text-base border-2"
+              >
+                {t('cancel')}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Today's Medications List - Priority Section */}
+      <Card className="bg-gradient-to-br from-health-teal/10 to-health-teal/5 border-health-teal/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl text-health-teal flex items-center gap-3">
+              <Pill className="h-6 w-6" />
+              {t('todaysMedications')}
+            </CardTitle>
+            <Button
+              onClick={() => setShowMedicationForm(!showMedicationForm)}
+              className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4 py-2"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('addNewMedication')}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {medications.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-health-teal/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Pill className="h-8 w-8 text-health-teal" />
+              </div>
+              <p className="text-lg text-muted-foreground mb-2">{t('noMedicationsYet')}</p>
+              <p className="text-sm text-muted-foreground">Add your first medication to get started</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {medications.map((med) => (
+                <div key={med.id} className="bg-white rounded-xl p-4 border border-health-teal/20 shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-health-teal rounded-full flex items-center justify-center">
+                          <Pill className="h-5 w-5 text-white" />
+                        </div>
+                        <h3 className="font-bold text-lg text-foreground">{med.name}</h3>
+                      </div>
+                      <p className="text-muted-foreground font-medium text-base">{med.dosage}</p>
+                      <p className="text-sm text-muted-foreground">{med.frequency}</p>
+                      {med.instructions && (
+                        <div className="flex items-center mt-3 p-3 bg-warning/10 rounded-lg border-l-4 border-warning">
+                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
+                          <span className="text-sm text-warning font-medium">{med.instructions}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right ml-4">
+                      <div className="flex items-center text-health-teal mb-2">
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
+                      </div>
+                      {med.time && (
+                        <div className={`text-xs px-3 py-1 rounded-full mb-3 font-medium ${
+                          getMedicationStatus(med.time) === 'urgent' ? 'bg-red-100 text-red-800' :
+                          getMedicationStatus(med.time) === 'soon' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {calculateTimeUntilDose(med.time)}
+                        </div>
+                      )}
+                      <Button 
+                        size="sm" 
+                        className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4"
+                      >
+                        ✓ {t('taken')}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Welcome Header with modern design */}
       <div className="bg-gradient-to-br from-health-coral to-primary p-6 rounded-2xl text-white relative overflow-hidden">
         <div className="relative z-10">
@@ -225,141 +377,6 @@ const PatientDashboard = () => {
           </Card>
         </div>
       </div>
-
-      {/* Add New Medication Form */}
-      {showMedicationForm && (
-        <Card className="border-2 border-health-teal/20 bg-health-teal/5">
-          <CardHeader>
-            <CardTitle className="text-lg text-health-teal">{t('addNewMedicationTitle')}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="name" className="text-base font-medium">{t('medicationName')}</Label>
-              <Input
-                id="name"
-                placeholder={t('medicationNamePlaceholder')}
-                value={medicationForm.name}
-                onChange={(e) => setMedicationForm({ ...medicationForm, name: e.target.value })}
-                className="elderly-focus text-base p-3 rounded-xl border-2"
-              />
-            </div>
-            <div>
-              <Label htmlFor="dosage" className="text-base font-medium">{t('dosage')}</Label>
-              <Input
-                id="dosage"
-                placeholder={t('dosagePlaceholder')}
-                value={medicationForm.dosage}
-                onChange={(e) => setMedicationForm({ ...medicationForm, dosage: e.target.value })}
-                className="elderly-focus text-base p-3 rounded-xl border-2"
-              />
-            </div>
-            <div>
-              <Label htmlFor="frequency" className="text-base font-medium">{t('frequency')}</Label>
-              <Input
-                id="frequency"
-                placeholder={t('frequencyPlaceholder')}
-                value={medicationForm.frequency}
-                onChange={(e) => setMedicationForm({ ...medicationForm, frequency: e.target.value })}
-                className="elderly-focus text-base p-3 rounded-xl border-2"
-              />
-            </div>
-            <div>
-              <Label htmlFor="time" className="text-base font-medium">{t('reminderTime')}</Label>
-              <Input
-                id="time"
-                type="time"
-                value={medicationForm.time}
-                onChange={(e) => setMedicationForm({ ...medicationForm, time: e.target.value })}
-                className="elderly-focus text-base p-3 rounded-xl border-2"
-              />
-            </div>
-            <div>
-              <Label htmlFor="instructions" className="text-base font-medium">{t('instructions')}</Label>
-              <Textarea
-                id="instructions"
-                placeholder={t('instructionsPlaceholder')}
-                value={medicationForm.instructions}
-                onChange={(e) => setMedicationForm({ ...medicationForm, instructions: e.target.value })}
-                className="elderly-focus text-base p-3 rounded-xl border-2 min-h-[100px]"
-              />
-            </div>
-            <div className="flex gap-3 pt-4">
-              <Button 
-                onClick={handleAddMedication} 
-                className="bg-health-teal text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-health-teal/90"
-              >
-                {t('addMedication')}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowMedicationForm(false)}
-                className="px-8 py-3 rounded-xl text-base border-2"
-              >
-                {t('cancel')}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Today's Medications List */}
-      {medications.length > 0 && (
-        <Card className="bg-gradient-to-br from-health-teal/10 to-health-teal/5 border-health-teal/20">
-          <CardHeader>
-            <CardTitle className="text-xl text-health-teal flex items-center gap-3">
-              <Pill className="h-6 w-6" />
-              {t('todaysMedications')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {medications.map((med) => (
-                <div key={med.id} className="bg-white rounded-xl p-4 border border-health-teal/20 shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-health-teal rounded-full flex items-center justify-center">
-                          <Pill className="h-5 w-5 text-white" />
-                        </div>
-                        <h3 className="font-bold text-lg text-foreground">{med.name}</h3>
-                      </div>
-                      <p className="text-muted-foreground font-medium text-base">{med.dosage}</p>
-                      <p className="text-sm text-muted-foreground">{med.frequency}</p>
-                      {med.instructions && (
-                        <div className="flex items-center mt-3 p-3 bg-warning/10 rounded-lg border-l-4 border-warning">
-                          <AlertTriangle className="h-4 w-4 mr-2 text-warning" />
-                          <span className="text-sm text-warning font-medium">{med.instructions}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right ml-4">
-                      <div className="flex items-center text-health-teal mb-2">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span className="text-sm font-medium">{med.time || "No time set"}</span>
-                      </div>
-                      {med.time && (
-                        <div className={`text-xs px-3 py-1 rounded-full mb-3 font-medium ${
-                          getMedicationStatus(med.time) === 'urgent' ? 'bg-red-100 text-red-800' :
-                          getMedicationStatus(med.time) === 'soon' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {calculateTimeUntilDose(med.time)}
-                        </div>
-                      )}
-                      <Button 
-                        size="sm" 
-                        className="bg-health-teal text-white hover:bg-health-teal/90 rounded-full px-4"
-                      >
-                        ✓ {t('taken')}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Ask Caretaker Help */}
       <Card className="bg-gradient-to-br from-health-yellow/20 to-health-yellow/10 border-health-yellow/30 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
