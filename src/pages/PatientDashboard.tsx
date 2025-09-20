@@ -513,7 +513,7 @@ const PatientDashboard = () => {
                   <div className="text-center p-3 bg-blue-100 rounded-lg">
                     <p className="text-2xl font-bold text-blue-700">5</p>
                     <p className="text-sm text-gray-500">Active Medications</p>
-                  </d>
+                  </div>
                 </div>
               </CardContent>
             </Card>
