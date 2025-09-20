@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar } from 'lucide-react';
+import PatientDashboard from './PatientDashboard.tsx';
+import CaretakerDashboard from './CaretakerDashboard.tsx';
 
 const LoginSignup = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(''); // State for displaying messages
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>(''); // State for displaying messages
+  const [userRole, setUserRole] = useState<string | null>(null); // State for user role
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,16 +20,14 @@ const LoginSignup = () => {
     role: 'patient'
   });
 
-  const navigate = useNavigate();
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     if (!formData.email || !formData.password) {
       setMessage('Please fill in email and password.');
       return false;
@@ -45,7 +45,7 @@ const LoginSignup = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
     
@@ -53,23 +53,24 @@ const LoginSignup = () => {
 
     setLoading(true);
 
-    // This is the simulated login/signup logic
     if (isLogin) {
-      // Simulate a successful login for demo accounts
       if (
-        (formData.email === 'patient@demo.com' && formData.password === 'password123') ||
+        (formData.email === 'patient@demo.com' && formData.password === 'password123')
+      ) {
+        setTimeout(() => {
+          console.log('Login successful');
+          setMessage('Login successful! Welcome back.');
+          setLoading(false);
+          setUserRole('patient');
+        }, 1500);
+      } else if (
         (formData.email === 'caretaker@demo.com' && formData.password === 'password123')
       ) {
         setTimeout(() => {
           console.log('Login successful');
           setMessage('Login successful! Welcome back.');
           setLoading(false);
-          // Redirect based on role
-          if (formData.email === 'patient@demo.com') {
-            navigate('/patient-dashboard');
-          } else if (formData.email === 'caretaker@demo.com') {
-            navigate('/caretaker-dashboard');
-          }
+          setUserRole('caretaker');
         }, 1500);
       } else {
         setTimeout(() => {
@@ -79,7 +80,6 @@ const LoginSignup = () => {
         }, 1500);
       }
     } else {
-      // Simulate a successful signup
       setTimeout(() => {
         console.log('Signup successful', formData);
         setMessage('Account created successfully! Please check your email to verify.');
@@ -102,7 +102,16 @@ const LoginSignup = () => {
       role: 'patient'
     });
   };
-
+  
+  // Conditional rendering based on user role
+  if (userRole === 'patient') {
+    return <PatientDashboard />;
+  }
+  
+  if (userRole === 'caretaker') {
+    return <CaretakerDashboard />;
+  }
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
