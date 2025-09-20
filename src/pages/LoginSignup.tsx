@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar } from 'lucide-react';
 
 const LoginSignup = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(''); // State to display user feedback
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
+  const [message, setMessage] = useState(''); // State for displaying messages
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,6 +18,8 @@ const LoginSignup = () => {
     role: 'patient'
   });
 
+  const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -26,18 +28,17 @@ const LoginSignup = () => {
   };
 
   const validateForm = () => {
-    setMessage('');
     if (!formData.email || !formData.password) {
-      setMessage('Please fill in email and password');
+      setMessage('Please fill in email and password.');
       return false;
     }
     if (!isLogin) {
       if (formData.password !== formData.confirmPassword) {
-        setMessage('Passwords do not match');
+        setMessage('Passwords do not match.');
         return false;
       }
       if (!formData.fullName) {
-        setMessage('Please enter your full name');
+        setMessage('Please enter your full name.');
         return false;
       }
     }
@@ -47,12 +48,14 @@ const LoginSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
-
+    
     if (!validateForm()) return;
 
     setLoading(true);
 
+    // This is the simulated login/signup logic
     if (isLogin) {
+      // Simulate a successful login for demo accounts
       if (
         (formData.email === 'patient@demo.com' && formData.password === 'password123') ||
         (formData.email === 'caretaker@demo.com' && formData.password === 'password123')
@@ -60,8 +63,13 @@ const LoginSignup = () => {
         setTimeout(() => {
           console.log('Login successful');
           setMessage('Login successful! Welcome back.');
-          setIsLoggedIn(true);
           setLoading(false);
+          // Redirect based on role
+          if (formData.email === 'patient@demo.com') {
+            navigate('/patient-dashboard');
+          } else if (formData.email === 'caretaker@demo.com') {
+            navigate('/caretaker-dashboard');
+          }
         }, 1500);
       } else {
         setTimeout(() => {
@@ -71,11 +79,11 @@ const LoginSignup = () => {
         }, 1500);
       }
     } else {
+      // Simulate a successful signup
       setTimeout(() => {
         console.log('Signup successful', formData);
         setMessage('Account created successfully! Please check your email to verify.');
         setLoading(false);
-        setIsLogin(true);
       }, 1500);
     }
   };
@@ -94,24 +102,6 @@ const LoginSignup = () => {
       role: 'patient'
     });
   };
-
-  // If the user is logged in, show a success message instead of the form
-  if (isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Login Successful!</h2>
-          <p className="text-gray-600 mb-6">You are now logged in. In a real application, you would be redirected to your dashboard here.</p>
-          <button
-            onClick={() => setIsLoggedIn(false)}
-            className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-200"
-          >
-            Go back to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
@@ -138,9 +128,8 @@ const LoginSignup = () => {
             </p>
           </div>
           
-          {/* Message display */}
           {message && (
-            <div className="mb-4 text-center text-sm font-medium text-red-500">
+            <div className={`p-3 rounded-lg text-sm mb-4 text-center font-medium ${message.includes('successful') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
               {message}
             </div>
           )}
