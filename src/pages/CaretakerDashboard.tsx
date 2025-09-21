@@ -1,121 +1,126 @@
-// src/pages/CaretakerDashboard.tsx
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { Menu, Plus, UserCheck, UserX, Search, Users } from "lucide-react";
+import { Menu, Plus, UserCheck, UserX, Search, Users, AlertCircle, ShieldCheck, Pill } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import ProgressCircle from "@/components/ui/progress-circle";
 
 const CaretakerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
   
-  const [patients, setPatients] = useState<any[]>([]);
+  // Enhanced patient data structure
+  const [patients, setPatients] = useState<any[]>([
+    { 
+      id: 101, 
+      patientName: "Raj Kumar", 
+      phone: "‪+91 98765 12345‬", 
+      status: "urgent", 
+      lastActive: "5 mins ago",
+      symptoms: ["High Fever", "Coughing"],
+      medicationAdherence: 60 // Percentage
+    },
+    { 
+      id: 102, 
+      patientName: "Sunita Sharma", 
+      phone: "‪+91 98765 54321‬", 
+      status: "stable", 
+      lastActive: "30 mins ago",
+      symptoms: ["Stable"],
+      medicationAdherence: 95
+    }
+  ]);
+
   const [invitations, setInvitations] = useState([
-    { id: 1, patientName: "John Doe", phone: "+91 9876543210", timestamp: "2 hours ago" },
-    { id: 2, patientName: "Mary Smith", phone: "+91 8765432109", timestamp: "1 day ago" }
+    { id: 1, patientName: "John Doe", phone: "‪+91 9876543210‬", timestamp: "2 hours ago" },
+    { id: 2, patientName: "Mary Smith", phone: "‪+91 8765432109‬", timestamp: "1 day ago" }
   ]);
 
   const handleAcceptInvitation = (id: number) => {
     const invitation = invitations.find(inv => inv.id === id);
     if (invitation) {
-      setPatients([...patients, { ...invitation, accepted: true }]);
+      const newPatient = {
+        ...invitation,
+        status: "stable",
+        lastActive: "Just now",
+        symptoms: ["Newly Added"],
+        medicationAdherence: 100
+      };
+      setPatients([...patients, newPatient]);
       setInvitations(invitations.filter(inv => inv.id !== id));
       toast({
         title: "Invitation Accepted",
-        description: `${invitation.patientName} has been added to your patients list.`,
+        description: ${invitation.patientName} has been added to your patients list.,
       });
     }
   };
 
   const handleRejectInvitation = (id: number) => {
     const invitation = invitations.find(inv => inv.id === id);
-    setInvitations(invitations.filter(inv => inv.id !== id));
     if (invitation) {
+      setInvitations(invitations.filter(inv => inv.id !== id));
       toast({
         title: "Invitation Rejected",
-        description: `You have rejected the invitation from ${invitation.patientName}.`,
+        description: You have rejected the invitation from ${invitation.patientName}.,
         variant: "destructive",
       });
     }
   };
 
-  const handleAddPatientClick = () => {
-    // This would typically open a search dialog or navigate to a new page
-    toast({
-      title: "Add Patient",
-      description: "Search for a patient by their phone number to send an invitation.",
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with Hamburger Menu */}
-      <header className="bg-card border-b p-4 flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b p-4 flex items-center justify-between">
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={() => setSidebarOpen(true)}
           className="elderly-focus"
         >
           <Menu className="h-6 w-6" />
         </Button>
         <h1 className="text-xl font-bold text-primary">Caretaker Dashboard</h1>
-        <div className="w-10" /> {/* Spacer */}
+        <div className="w-10" />
       </header>
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="caretaker" />
 
-      <div className="p-4 space-y-6">
-        {/* Patient Invitations */}
+      <main className="p-4 md:p-6 space-y-6">
+        {/* Patient Invitations Section */}
         {invitations.length > 0 && (
-          <Card>
+          <Card className="border-blue-200 bg-blue-50">
             <CardHeader>
-              <CardTitle className="text-xl">Patient Invitations</CardTitle>
+              <CardTitle className="text-lg text-blue-800">Patient Invitations</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {invitations.map((invitation) => (
-                <div key={invitation.id} className="border rounded-lg p-4 bg-secondary/30">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg">{invitation.patientName}</h3>
-                      <p className="text-muted-foreground">{invitation.phone}</p>
-                      <p className="text-sm text-muted-foreground">Invited {invitation.timestamp}</p>
+                <div key={invitation.id} className="border bg-white rounded-lg p-3">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold">{invitation.patientName}</h3>
+                      <p className="text-sm text-muted-foreground">{invitation.phone}</p>
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-2">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8 bg-success/10 border-success text-success hover:bg-success hover:text-success-foreground"
-                              onClick={() => handleAcceptInvitation(invitation.id)}
-                            >
+                            <Button size="icon" variant="outline" className="h-8 w-8 bg-success/10 text-success hover:bg-success hover:text-white" onClick={() => handleAcceptInvitation(invitation.id)}>
                               <UserCheck className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Accept invitation</p>
-                          </TooltipContent>
+                          <TooltipContent><p>Accept</p></TooltipContent>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8 bg-destructive/10 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                              onClick={() => handleRejectInvitation(invitation.id)}
-                            >
+                            <Button size="icon" variant="outline" className="h-8 w-8 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white" onClick={() => handleRejectInvitation(invitation.id)}>
                               <UserX className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Reject invitation</p>
-                          </TooltipContent>
+                          <TooltipContent><p>Reject</p></TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
@@ -126,47 +131,66 @@ const CaretakerDashboard = () => {
           </Card>
         )}
 
-        {/* My Patients */}
+        {/* My Patients Section */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-xl">My Patients</CardTitle>
-            <Button className="btn-elderly bg-primary" onClick={handleAddPatientClick}>
-              <Plus className="h-5 w-5 mr-2" />
-              Add Patient
-            </Button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input placeholder="Search patients..." className="pl-10 w-full md:w-64" />
+            </div>
           </CardHeader>
           <CardContent>
             {patients.length === 0 ? (
               <div className="text-center py-12 border-2 border-dashed rounded-lg">
-                <div className="w-24 h-24 bg-muted rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Users className="h-12 w-12 text-muted-foreground" />
-                </div>
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h2 className="text-xl font-semibold mb-2">No Patients Yet</h2>
-                <p className="text-muted-foreground max-w-sm mx-auto">
-                  When you accept an invitation, the patient will appear here. You can also add new patients to monitor their health.
-                </p>
+                <p className="text-muted-foreground">Accept an invitation to start monitoring a patient.</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="relative mb-4">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input placeholder="Search patients..." className="pl-10" />
-                </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {patients.map((patient) => (
-                  <div key={patient.id} className="border rounded-lg p-4 bg-secondary/30 cursor-pointer hover:bg-secondary/50 transition-colors">
-                    <h3 className="font-bold text-lg">{patient.patientName}</h3>
-                    <p className="text-muted-foreground">{patient.phone}</p>
-                    <div className="mt-2 flex items-center gap-4 text-sm">
-                      <span className="text-success flex items-center gap-1.5">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
-                        </span>
-                        Connected
-                      </span>
-                      <span className="text-muted-foreground">Last activity: Today</span>
-                    </div>
-                  </div>
+                  <Card 
+                    key={patient.id} 
+                    className={`cursor-pointer hover:shadow-lg transition-shadow ${
+                      patient.status === 'urgent' ? 'border-red-500 bg-red-50' : 
+                      patient.status === 'warning' ? 'border-yellow-500 bg-yellow-50' : 
+                      ''
+                    }`}
+                  >
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">{patient.patientName}</CardTitle>
+                          <p className="text-sm text-muted-foreground">{patient.phone}</p>
+                        </div>
+                        <Badge variant={patient.status === 'urgent' ? 'destructive' : 'default'}>
+                          {patient.status === 'urgent' ? <AlertCircle className="h-4 w-4 mr-1.5" /> : <ShieldCheck className="h-4 w-4 mr-1.5" />}
+                          {patient.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <h4 className="text-sm font-semibold mb-1">Current Symptoms</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {patient.symptoms.map((symptom: string, index: number) => (
+                            <Badge key={index} variant="secondary">{symptom}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                           <Pill className="h-5 w-5 text-primary" />
+                           <div>
+                             <p className="text-sm font-semibold">Medication</p>
+                             <p className="text-xs text-muted-foreground">Adherence</p>
+                           </div>
+                        </div>
+                        <ProgressCircle progress={patient.medicationAdherence} size="sm" />
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             )}
