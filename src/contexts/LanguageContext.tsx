@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// --- Language Context and Provider ---
 type Language = 'en' | 'hi';
 
 interface LanguageContextType {
@@ -12,6 +13,12 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations = {
   en: {
+    // New translations added for the blood pressure card
+    timeToCheck: "It's time to Check Your",
+    bloodPressure: "Blood Pressure",
+    yesterdaysReading: "Yesterday's Reading: 140 mg/dl",
+    remindMeLater: "Remind me later",
+    
     // Header
     home: "Home",
     symptoms: "Symptoms",
@@ -46,7 +53,6 @@ const translations = {
     // Symptoms
     dailyWellnessTracker: "Daily Wellness Tracker",
     todaysVitals: "Today's Vitals",
-    bloodPressure: "Blood Pressure",
     temperature: "Temperature",
     heartRate: "Heart Rate",
     normal: "Normal",
@@ -84,6 +90,12 @@ const translations = {
     emergencyHelp: "Emergency Help"
   },
   hi: {
+    // New translations added for the blood pressure card
+    timeToCheck: "अपनी जाँच का समय हो गया है",
+    bloodPressure: "रक्तचाप",
+    yesterdaysReading: "कल की रीडिंग: 140 mg/dl",
+    remindMeLater: "मुझे बाद में याद दिलाएं",
+    
     // Header
     home: "होम",
     symptoms: "लक्षण",
@@ -118,7 +130,6 @@ const translations = {
     // Symptoms
     dailyWellnessTracker: "दैनिक स्वास्थ्य ट्रैकर",
     todaysVitals: "आज के महत्वपूर्ण संकेत",
-    bloodPressure: "रक्तचाप",
     temperature: "तापमान",
     heartRate: "हृदय गति",
     normal: "सामान्य",
@@ -182,3 +193,49 @@ export const useLanguage = () => {
   }
   return context;
 };
+
+// --- Symptoms Component that uses the Language Hook ---
+const Symptoms = () => {
+  const { t } = useLanguage();
+
+  return (
+    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg mx-auto my-12">
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-1">{t('greeting')}</h2>
+          <p className="text-lg text-gray-500">{t('subtitle')}</p>
+        </div>
+        <span className="text-4xl">🙏</span>
+      </div>
+
+      <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 mb-6">
+        <p className="text-sm font-medium text-gray-500 mb-2">{t('timeToCheck')}</p>
+        <h3 className="text-3xl font-bold text-gray-800 mb-1">{t('bloodPressure')}</h3>
+        <p className="text-sm text-gray-500 mb-4">{t('yesterdaysReading')}</p>
+        <button className="w-full py-3 px-6 text-base font-semibold text-white bg-purple-500 rounded-full hover:bg-purple-600 transition-colors duration-300">
+          {t('remindMeLater')}
+        </button>
+      </div>
+      
+      {/* Other Symptom UI elements would go here */}
+    </div>
+  );
+};
+
+// --- Main App Component to demonstrate usage ---
+export default function App() {
+  const { language, toggleLanguage } = useLanguage();
+
+  return (
+    <LanguageProvider>
+      <div className="min-h-screen bg-gray-100 p-8">
+        <div className="absolute top-4 right-4">
+          <button onClick={toggleLanguage} className="bg-white border rounded-full px-4 py-2 shadow-md hover:bg-gray-50 transition-colors">
+            Change to {language === 'en' ? 'Hindi' : 'English'}
+          </button>
+        </div>
+        <Symptoms />
+      </div>
+    </LanguageProvider>
+  );
+}
