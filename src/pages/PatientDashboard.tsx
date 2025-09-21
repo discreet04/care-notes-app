@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Check } from "lucide-react";
+import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Check, Trash } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Sidebar from "@/components/Sidebar";
@@ -32,7 +32,12 @@ const PatientDashboard = () => {
   ]);
   const { toast } = useToast();
   const { t } = useLanguage();
-  
+
+  // New state for symptom logging
+  const genericSymptoms = ["Fatigue", "Headache", "Nausea", "Cough", "Dizziness", "Sore Throat", "Shortness of Breath", "Chest Pain", "Back Pain", "Insomnia"];
+  const [loggedSymptoms, setLoggedSymptoms] = useState<any[]>([]);
+  const [newSymptom, setNewSymptom] = useState({ name: "", severity: "mild", notes: "" });
+
   // Update timers every minute
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,6 +86,39 @@ const PatientDashboard = () => {
     });
   };
 
+  // --- Symptom handlers ---
+  const addSymptom = () => {
+    if (!newSymptom.name || newSymptom.name.trim() === "") {
+      toast({
+        title: "Choose a symptom",
+        description: "Please select or type a symptom to add.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const entry = {
+      id: Date.now(),
+      name: newSymptom.name.trim(),
+      severity: newSymptom.severity,
+      notes: newSymptom.notes?.trim() || "",
+      time: new Date().toISOString()
+    };
+
+    setLoggedSymptoms(prev => [entry, ...prev]);
+    setNewSymptom({ name: "", severity: "mild", notes: "" });
+
+    toast({
+      title: "Symptom logged",
+      description: `${entry.name} — ${entry.severity.charAt(0).toUpperCase() + entry.severity.slice(1)}`
+    });
+  };
+
+  const removeLoggedSymptom = (id: number) => {
+    setLoggedSymptoms(prev => prev.filter(s => s.id !== id));
+  };
+
+  // --- Render functions ---
   const renderHomeContent = () => (
     <div className="space-y-6 pb-[80px]">
       {/* Add New Medication Form */}
@@ -300,98 +338,231 @@ const PatientDashboard = () => {
     </div>
   );
 
+  const renderSymptomsContent = () => (
+    <div className="space-y-4 pb-[80px]">
+      {/* Header Image */}
+      <div className="relative h-32 rounded-lg overflow-hidden">
+        <img 
+          src={elderlyYoga} 
+          alt="Wellness and Health" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute bottom-2 left-2 text-white">
+          <h2 className="text-lg font-bold">{t('dailyWellnessTracker')}</h2>
+          <p className="text-sm">{t('subtitle')}</p>
+        </div>
+      </div>
+
+      {/* Vital Signs */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Activity className="h-5 w-5 text-blue-600" />
+            {t('todaysVitals')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            {symptoms.map((symptom) => {
+              const Icon = symptom.icon;
+              return (
+                <div key={symptom.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-6 w-6 ${symptom.color}`} />
+                    <div>
+                      <h4 className="font-medium">{symptom.name}</h4>
+                      <p className="text-2xl font-bold">{symptom.value}</p>
+                    </div>
+                  </div>
+                  <Badge variant={symptom.status === "normal" ? "default" : "destructive"}>
+                    {t(symptom.status)}
+                  </Badge>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Log Symptom Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Plus className="h-5 w-5 text-teal-600" />
+            Log Symptom
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {/* Select common symptom or custom */}
+          <div className="grid grid-cols-1 gap-3">
+            <div>
+              <Label className="text-sm font-medium">Choose common symptom</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                {genericSymptoms.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setNewSymptom({ ...newSymptom, name: s })}
+                    className={`text-left p-3 rounded-lg border ${
+                      newSymptom.name === s ? "border-teal-600 bg-teal-50" : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    <div className="font-medium">{s}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Or type a custom symptom</Label>
+              <Input
+                placeholder="e.g. Sharp pain in left knee"
+                value={newSymptom.name}
+                onChange={(e) => setNewSymptom({ ...newSymptom, name: e.target.value })}
+                className="mt-2 rounded-lg p-3"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Severity</Label>
+              <div className="flex gap-2 mt-2">
+                {["mild", "moderate", "severe"].map((level) => (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => setNewSymptom({ ...newSymptom, severity: level })}
+                    className={`flex-1 p-3 rounded-lg border font-medium ${
+                      newSymptom.severity === level
+                        ? level === "mild"
+                          ? "bg-green-50 border-green-400"
+                          : level === "moderate"
+                          ? "bg-yellow-50 border-yellow-400"
+                          : "bg-red-50 border-red-400"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Notes (optional)</Label>
+              <Textarea
+                placeholder="Anything else to note..."
+                value={newSymptom.notes}
+                onChange={(e) => setNewSymptom({ ...newSymptom, notes: e.target.value })}
+                className="mt-2 rounded-lg p-3 min-h-[80px]"
+              />
+            </div>
+
+            <div className="pt-1">
+              <Button className="w-full bg-teal-600 text-white rounded-xl py-3" onClick={addSymptom}>
+                <Plus className="h-4 w-4 mr-2 inline" /> Add Symptom
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Logged Symptoms */}
+      {loggedSymptoms.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Your Logged Symptoms</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              {loggedSymptoms.map((s) => (
+                <div key={s.id} className="flex items-start justify-between gap-3 p-3 bg-gray-50 rounded-lg border">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-base">{s.name}</div>
+                        <div className="text-xs text-gray-500">{new Date(s.time).toLocaleString()}</div>
+                      </div>
+                      <div className="ml-3">
+                        <Badge
+                          className={`px-3 py-1 text-sm ${
+                            s.severity === "mild"
+                              ? "bg-green-100 text-green-700"
+                              : s.severity === "moderate"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {s.severity.charAt(0).toUpperCase() + s.severity.slice(1)}
+                        </Badge>
+                      </div>
+                    </div>
+                    {s.notes && <p className="mt-2 text-sm text-gray-700">{s.notes}</p>}
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2">
+                    <button
+                      onClick={() => removeLoggedSymptom(s.id)}
+                      className="p-2 rounded-full hover:bg-gray-100"
+                      aria-label="Delete symptom"
+                    >
+                      <Trash className="h-4 w-4 text-gray-600" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Traditional Remedies */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">{t('ayurvedicTips')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative h-24 rounded-lg overflow-hidden mb-4">
+            <img 
+              src={ayurvedicHerbs} 
+              alt="Ayurvedic Herbs" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="space-y-3">
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <p className="text-sm">🌿 <strong>{t('turmericMilk')}</strong></p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <p className="text-sm">🧘 <strong>{t('pranayama')}</strong></p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <p className="text-sm">☕ <strong>{t('tulsiTea')}</strong></p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-3">
+        <Button variant="outline" className="h-16 flex-col gap-1">
+          <Thermometer className="h-5 w-5" />
+          <span className="text-sm">Log Temperature</span>
+        </Button>
+        <Button variant="outline" className="h-16 flex-col gap-1">
+          <Heart className="h-5 w-5" />
+          <span className="text-sm">{t('logBP')}</span>
+        </Button>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
       case "home":
         return renderHomeContent();
       case "symptoms":
-        return (
-          <div className="space-y-4 pb-[80px]">
-            {/* Header Image */}
-            <div className="relative h-32 rounded-lg overflow-hidden">
-              <img 
-                src={elderlyYoga} 
-                alt="Wellness and Health" 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-2 left-2 text-white">
-                <h2 className="text-lg font-bold">{t('dailyWellnessTracker')}</h2>
-                <p className="text-sm">{t('subtitle')}</p>
-              </div>
-            </div>
-
-            {/* Vital Signs */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-blue-600" />
-                  {t('todaysVitals')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {symptoms.map((symptom) => {
-                    const Icon = symptom.icon;
-                    return (
-                      <div key={symptom.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Icon className={`h-6 w-6 ${symptom.color}`} />
-                          <div>
-                            <h4 className="font-medium">{symptom.name}</h4>
-                            <p className="text-2xl font-bold">{symptom.value}</p>
-                          </div>
-                        </div>
-                        <Badge variant={symptom.status === "normal" ? "default" : "destructive"}>
-                          {t(symptom.status)}
-                        </Badge>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Traditional Remedies */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t('ayurvedicTips')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative h-24 rounded-lg overflow-hidden mb-4">
-                  <img 
-                    src={ayurvedicHerbs} 
-                    alt="Ayurvedic Herbs" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <p className="text-sm">🌿 <strong>{t('turmericMilk')}</strong></p>
-                  </div>
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <p className="text-sm">🧘 <strong>{t('pranayama')}</strong></p>
-                  </div>
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <p className="text-sm">☕ <strong>{t('tulsiTea')}</strong></p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-16 flex-col gap-1">
-                <Thermometer className="h-5 w-5" />
-                <span className="text-sm">Log Temperature</span>
-              </Button>
-              <Button variant="outline" className="h-16 flex-col gap-1">
-                <Heart className="h-5 w-5" />
-                <span className="text-sm">{t('logBP')}</span>
-              </Button>
-            </div>
-          </div>
-        );
+        return renderSymptomsContent();
       case "ai-helper":
         return <EnhancedAIChat />;
       case "profile":
