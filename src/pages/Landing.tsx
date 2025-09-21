@@ -7,17 +7,7 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFBEB] text-[#3C3C3C]">
-      {/* Language Toggle */}
-      <div className="absolute top-6 right-6 z-10">
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-white/70 backdrop-blur-sm text-[#E5A500] border-[#E5A500] hover:bg-[#E5A500]/10 transition-colors duration-300"
-        >
-          <Globe className="h-4 w-4 mr-2" />
-          Change to Hindi
-        </Button>
-      </div>
+      {/* The Language Toggle button has been removed */}
 
       <div className="container mx-auto px-4 py-20 relative z-0">
         {/* Decorative Circles */}
