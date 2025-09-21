@@ -74,7 +74,6 @@ const Sidebar = ({ isOpen, onClose, currentRole }: SidebarProps) => {
           {/* Role Badge */}
           <div className="p-4 border-b">
             <div className="bg-primary/10 rounded-lg p-3 text-center">
-              <p className="text-sm text-muted-foreground">Current Role</p>
               <p className="font-semibold text-primary capitalize">{currentRole}</p>
             </div>
           </div>
