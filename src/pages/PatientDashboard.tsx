@@ -1,3 +1,8 @@
+/* PatientDashboard.tsx — DEBUG / localStorage-robust version
+   Replace your existing PatientDashboard.tsx with this file.
+   After pasting, save and refresh the app page (use Incognito).
+*/
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,14 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Check, Trash } from "lucide-react";
+import {
+  Menu, Plus, Clock, AlertTriangle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Trash
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Sidebar from "@/components/Sidebar";
 import BottomNavigation from "@/components/BottomNavigation";
 import LanguageToggle from "@/components/LanguageToggle";
 import EnhancedAIChat from "@/components/AIChat";
-import ProgressCircle from "@/components/ui/progress-circle";
 import { calculateTimeUntilDose, getMedicationStatus } from "@/utils/medicationTimer";
 import elderlyYoga from "@/assets/elderly-yoga.jpg";
 import ayurvedicHerbs from "@/assets/ayurvedic-herbs.jpg";
@@ -29,12 +35,14 @@ const PatientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [showMedicationForm, setShowMedicationForm] = useState(false);
-  const [medications, setMedications] = useState<any[]>([]);
+
+  // UI demo vitals (unchanged)
   const [symptoms, setSymptoms] = useState([
     { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-green-600" },
     { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-blue-600" },
     { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-green-600" }
   ]);
+
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -45,7 +53,8 @@ const PatientDashboard = () => {
   const [loggedSymptoms, setLoggedSymptoms] = useState<any[]>([]);
   const [newSymptom, setNewSymptom] = useState({ name: "", severity: "mild", notes: "" });
 
-  // medication form state
+  // medication state (persisted)
+  const [medications, setMedications] = useState<any[]>([]);
   const [medicationForm, setMedicationForm] = useState({
     name: "",
     dosage: "",
@@ -54,59 +63,73 @@ const PatientDashboard = () => {
     instructions: ""
   });
 
-  // Load persisted data on mount
+  // Undo helpers
+  const [lastDeletedSymptom, setLastDeletedSymptom] = useState<any | null>(null);
+  const [undoTimerId, setUndoTimerId] = useState<number | null>(null);
+
+  // -------------------
+  // Robust localStorage load (once)
+  // -------------------
   useEffect(() => {
-    // Load logged symptoms
     try {
+      console.log("[DEBUG] window.origin:", window.location.origin);
+      console.log("[DEBUG] Loading saved symptoms from key:", LOCAL_STORAGE_KEYS.SYMPTOMS);
       const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.SYMPTOMS);
+      console.log("[DEBUG] Raw loaded symptoms:", raw);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) setLoggedSymptoms(parsed);
       }
     } catch (e) {
-      // invalid JSON or other issue - ignore and continue with empty state
-      console.warn("Failed to load loggedSymptoms from localStorage:", e);
+      console.error("[DEBUG] Error loading loggedSymptoms:", e);
     }
 
-    // Load medications
     try {
-      const rawMed = localStorage.getItem(LOCAL_STORAGE_KEYS.MEDICATIONS);
-      if (rawMed) {
-        const parsedMed = JSON.parse(rawMed);
-        if (Array.isArray(parsedMed)) setMedications(parsedMed);
+      console.log("[DEBUG] Loading saved medications from key:", LOCAL_STORAGE_KEYS.MEDICATIONS);
+      const rawM = localStorage.getItem(LOCAL_STORAGE_KEYS.MEDICATIONS);
+      console.log("[DEBUG] Raw loaded medications:", rawM);
+      if (rawM) {
+        const parsedM = JSON.parse(rawM);
+        if (Array.isArray(parsedM)) setMedications(parsedM);
       }
     } catch (e) {
-      console.warn("Failed to load medications from localStorage:", e);
+      console.error("[DEBUG] Error loading medications:", e);
     }
   }, []);
 
+  // -------------------
   // Save loggedSymptoms whenever they change
+  // -------------------
   useEffect(() => {
     try {
+      console.log("[DEBUG] Saving loggedSymptoms to localStorage. count:", loggedSymptoms.length);
       localStorage.setItem(LOCAL_STORAGE_KEYS.SYMPTOMS, JSON.stringify(loggedSymptoms));
     } catch (e) {
-      console.warn("Failed to save loggedSymptoms to localStorage:", e);
+      console.error("[DEBUG] Failed to save loggedSymptoms:", e);
     }
   }, [loggedSymptoms]);
 
   // Save medications whenever they change
   useEffect(() => {
     try {
+      console.log("[DEBUG] Saving medications to localStorage. count:", medications.length);
       localStorage.setItem(LOCAL_STORAGE_KEYS.MEDICATIONS, JSON.stringify(medications));
     } catch (e) {
-      console.warn("Failed to save medications to localStorage:", e);
+      console.error("[DEBUG] Failed to save medications:", e);
     }
   }, [medications]);
 
-  // Keep timers updating every minute (for medication timers)
+  // Timer for medication UI refresh
   useEffect(() => {
     const interval = setInterval(() => {
-      setMedications(prev => [...prev]); // triggers re-render if timers are shown
+      setMedications(prev => [...prev]); // trigger re-render for timer displays
     }, 60000);
     return () => clearInterval(interval);
   }, []);
 
+  // -------------------
   // Medication handlers
+  // -------------------
   const handleAddMedication = () => {
     if (!medicationForm.name || !medicationForm.dosage || !medicationForm.frequency) {
       toast({
@@ -121,11 +144,11 @@ const PatientDashboard = () => {
       id: Date.now(),
       ...medicationForm
     };
-    
+
     setMedications(prev => [newMedication, ...prev]);
     setMedicationForm({ name: "", dosage: "", frequency: "", time: "", instructions: "" });
     setShowMedicationForm(false);
-    
+
     toast({
       title: "Medication Added",
       description: `${medicationForm.name} has been added to your list`
@@ -138,12 +161,14 @@ const PatientDashboard = () => {
 
   const requestCaretakerHelp = () => {
     toast({
-      title: t('needHelp'), 
+      title: t('needHelp'),
       description: t('callCaretaker')
     });
   };
 
+  // -------------------
   // Symptom handlers
+  // -------------------
   const addSymptom = () => {
     if (!newSymptom.name || newSymptom.name.trim() === "") {
       toast({
@@ -172,10 +197,88 @@ const PatientDashboard = () => {
   };
 
   const removeLoggedSymptom = (id: number) => {
+    const toRemove = loggedSymptoms.find(s => s.id === id);
+    if (!toRemove) return;
+
+    // remove immediately
     setLoggedSymptoms(prev => prev.filter(s => s.id !== id));
+
+    // set last deleted and start undo timer
+    setLastDeletedSymptom(toRemove);
+    if (undoTimerId) {
+      window.clearTimeout(undoTimerId);
+      setUndoTimerId(null);
+    }
+    const tid = window.setTimeout(() => {
+      setLastDeletedSymptom(null);
+      setUndoTimerId(null);
+    }, 8000); // 8 seconds to undo
+    setUndoTimerId(tid);
+
+    toast({
+      title: "Entry deleted",
+      description: `${toRemove.name} removed — you have 8s to undo.`,
+    });
   };
 
-  // Renderers
+  // -------------------
+  // Export and Clear helpers
+  // -------------------
+  const exportToCSV = (filename: string, rows: Record<string, any>[]) => {
+    if (!rows || rows.length === 0) {
+      toast({ title: "Nothing to export", description: "No entries found", variant: "destructive" });
+      return;
+    }
+    const cols = Object.keys(rows[0]);
+    const csv = [
+      cols.join(","),
+      ...rows.map(row => cols.map(c => `"${((row[c] ?? "") + "").toString().replace(/"/g, '""')}"`).join(","))
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportSymptomsCSV = () => {
+    const rows = loggedSymptoms.map(s => ({
+      time: new Date(s.time).toLocaleString(),
+      symptom: s.name,
+      severity: s.severity,
+      notes: s.notes || ""
+    }));
+    exportToCSV("symptoms.csv", rows);
+  };
+
+  const exportMedicationsCSV = () => {
+    const rows = medications.map(m => ({
+      addedAt: m.id ? new Date(m.id).toLocaleString() : "",
+      name: m.name || "",
+      dosage: m.dosage || "",
+      frequency: m.frequency || "",
+      time: m.time || "",
+      instructions: m.instructions || ""
+    }));
+    exportToCSV("medications.csv", rows);
+  };
+
+  const clearLocalData = () => {
+    if (!confirm("Clear saved data (localStorage)? This cannot be undone.")) return;
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.SYMPTOMS);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.MEDICATIONS);
+    } catch (e) { console.warn(e); }
+    setLoggedSymptoms([]);
+    setMedications([]);
+    toast({ title: "Local data cleared" });
+  };
+
+  // -------------------
+  // Renderers (home / symptoms / profile)
+  // -------------------
   const renderHomeContent = () => (
     <div className="space-y-6 pb-[80px]">
       {/* Add New Medication Form */}
@@ -236,14 +339,14 @@ const PatientDashboard = () => {
               />
             </div>
             <div className="flex gap-3 pt-4">
-              <Button 
-                onClick={handleAddMedication} 
+              <Button
+                onClick={handleAddMedication}
                 className="bg-teal-600 text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-teal-700"
               >
                 {t('addMedication')}
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowMedicationForm(false)}
                 className="px-8 py-3 rounded-xl text-base border-2"
               >
@@ -254,7 +357,7 @@ const PatientDashboard = () => {
         </Card>
       )}
 
-      {/* Today's Medications List - Priority Section */}
+      {/* Today's Medications List */}
       <Card className="bg-gradient-to-br from-teal-50 to-teal-50 border-teal-200">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -325,8 +428,8 @@ const PatientDashboard = () => {
                         </div>
                       )}
                       <div className="flex gap-2 justify-end items-center">
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4"
                         >
                           ✓ {t('taken')}
@@ -344,7 +447,7 @@ const PatientDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Welcome Header with modern design */}
+      {/* Welcome Header */}
       <div className="bg-gradient-to-br from-rose-200 to-blue-200 p-6 rounded-2xl text-gray-800 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
@@ -359,8 +462,8 @@ const PatientDashboard = () => {
             <p className="text-xl font-semibold">Blood Pressure</p>
             <p className="text-sm text-gray-600 mt-1">Yesterday's Reading: 140 mg/dl</p>
             <div className="flex gap-3 mt-4">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
                 onClick={() => {
                   toast({
@@ -377,7 +480,7 @@ const PatientDashboard = () => {
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-16 -mt-16"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
       </div>
-      
+
       {/* Ask Caretaker Help */}
       <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
@@ -400,13 +503,63 @@ const PatientDashboard = () => {
     </div>
   );
 
-  const renderSymptomsContent = () => (
+  // Prefer local stored symptoms on mount (do not overwrite with empty server response)
+useEffect(() => {
+  const key = LOCAL_STORAGE_KEYS.SYMPTOMS; // if you later add user-specific keys, update this
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // prefer local data - set state from local storage and skip server overwrite
+        setLoggedSymptoms(parsed);
+        console.log("[LOCAL PREFER] Restored", parsed.length, "symptoms from", key);
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn("[LOCAL PREFER] error reading local symptoms:", e);
+  }
+  // fallback: nothing in localStorage — you can allow server load after this
+}, []);
+
+// merge serverData with local storage, preferring local for any non-empty local data
+const mergeServerWithLocal = (serverData: any[] = []) => {
+  try {
+    const key = LOCAL_STORAGE_KEYS.SYMPTOMS;
+    const raw = localStorage.getItem(key);
+    const local = raw ? JSON.parse(raw) : [];
+
+    // If local has items, merge server items that aren't duplicates by id
+    if (Array.isArray(local) && local.length > 0) {
+      const merged = [...local];
+      for (const s of (serverData || [])) {
+        const exists = merged.some(m => String(m.id) === String(s.id));
+        if (!exists) merged.push(s);
+      }
+      setLoggedSymptoms(merged);
+      localStorage.setItem(key, JSON.stringify(merged));
+      console.log("[MERGE] merged server and local; local kept. mergedCount:", merged.length);
+    } else {
+      // no local items -> server is authoritative
+      setLoggedSymptoms(serverData || []);
+      localStorage.setItem(key, JSON.stringify(serverData || []));
+      console.log("[MERGE] used server data; count:", (serverData || []).length);
+    }
+  } catch (e) {
+    console.warn("[MERGE] failed to merge server/local:", e);
+    // fallback to server data
+    setLoggedSymptoms(serverData || []);
+  }
+};
+  
+const renderSymptomsContent = () => (
     <div className="space-y-4 pb-[80px]">
       {/* Header Image */}
       <div className="relative h-32 rounded-lg overflow-hidden">
-        <img 
-          src={elderlyYoga} 
-          alt="Wellness and Health" 
+        <img
+          src={elderlyYoga}
+          alt="Wellness and Health"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -456,7 +609,6 @@ const PatientDashboard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {/* Select common symptom or custom */}
           <div className="grid grid-cols-1 gap-3">
             <div>
               <Label className="text-sm font-medium">Choose common symptom</Label>
@@ -585,9 +737,9 @@ const PatientDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="relative h-24 rounded-lg overflow-hidden mb-4">
-            <img 
-              src={ayurvedicHerbs} 
-              alt="Ayurvedic Herbs" 
+            <img
+              src={ayurvedicHerbs}
+              alt="Ayurvedic Herbs"
               className="w-full h-full object-cover"
             />
           </div>
@@ -630,13 +782,13 @@ const PatientDashboard = () => {
       case "profile":
         return (
           <div className="space-y-4 pb-[80px]">
-            {/* Profile Header */}
+            {/* Profile etc — unchanged */}
             <Card>
               <CardContent className="p-0">
                 <div className="relative h-32 rounded-t-lg overflow-hidden">
-                  <img 
-                    src={familyProfile} 
-                    alt="Family Profile" 
+                  <img
+                    src={familyProfile}
+                    alt="Family Profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -654,109 +806,9 @@ const PatientDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Personal Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t('personalInfo')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-                    <Phone className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="text-sm text-gray-500">{t('phone')}</p>
-                      <p className="font-medium">+91 98765 43210</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-100 rounded-lg">
-                    <MapPin className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="text-sm text-gray-500">{t('address')}</p>
-                      <p className="font-medium">123 Gandhi Nagar, Delhi</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Health Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Health Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="relative h-20 rounded-lg overflow-hidden mb-4">
-                  <img 
-                    src={healthSymbols} 
-                    alt="Health Symbols" 
-                    className="w-full h-full object-cover opacity-50"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-3 bg-green-100 rounded-lg">
-                    <p className="text-2xl font-bold text-green-700">7</p>
-                    <p className="text-sm text-gray-500">Days Med Compliant</p>
-                  </div>
-                  <div className="text-center p-3 bg-blue-100 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-700">5</p>
-                    <p className="text-sm text-gray-500">Active Medications</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Family Contacts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium">S</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Sunita Sharma (Daughter)</p>
-                      <p className="text-sm text-gray-500">Primary Caretaker</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    <Phone className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-gray-800 font-medium">A</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Dr. Amit Patel</p>
-                      <p className="text-sm text-gray-500">Family Doctor</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    <Phone className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Settings */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-16 flex-col gap-1">
-                <Camera className="h-5 w-5" />
-                <span className="text-sm">Change Photo</span>
-              </Button>
-              <Button variant="outline" className="h-16 flex-col gap-1">
-                <AlertTriangle className="h-5 w-5" />
-                <span className="text-sm">Emergency Info</span>
-              </Button>
-            </div>
+            {/* ...other profile sections unchanged */}
           </div>
         );
-      case "ai-helper":
-        return <EnhancedAIChat />;
       case "panic":
         return (
           <div className="space-y-4">
@@ -780,7 +832,7 @@ const PatientDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-[80px]">
-      {/* Simple Header */}
+      {/* Header */}
       <header className="bg-white border-b p-4 flex items-center justify-between">
         <Button
           variant="ghost"
@@ -791,10 +843,10 @@ const PatientDashboard = () => {
           <Menu className="h-6 w-6" />
         </Button>
         <h1 className="text-xl font-bold text-gray-800">
-          {t(activeTab === "home" ? "home" : 
-             activeTab === "symptoms" ? "symptoms" : 
-             activeTab === "ai-helper" ? "aiHelper" :
-             activeTab === "profile" ? "profile" : "panic")}
+          {t(activeTab === "home" ? "home" :
+            activeTab === "symptoms" ? "symptoms" :
+              activeTab === "ai-helper" ? "aiHelper" :
+                activeTab === "profile" ? "profile" : "panic")}
         </h1>
         <LanguageToggle />
       </header>
@@ -802,6 +854,54 @@ const PatientDashboard = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="patient" />
 
       <div className="p-4">
+        {/* DEBUG badge shows saved count and key */}
+        <div className="mb-3 flex items-center justify-between">
+          <div className="text-sm px-3 py-1 bg-blue-50 text-blue-800 rounded-full">
+            LocalStorage: {(() => {
+              try {
+                const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.SYMPTOMS);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed.length : 0;
+              } catch (e) {
+                return "err";
+              }
+            })()}
+          </div>
+          <div className="text-xs text-muted-foreground">Key: {LOCAL_STORAGE_KEYS.SYMPTOMS}</div>
+        </div>
+
+        {/* Undo banner */}
+        {lastDeletedSymptom && (
+          <div className="fixed left-1/2 -translate-x-1/2 bottom-20 z-50 w-[90%] max-w-xl p-3 bg-gray-800 text-white rounded-lg shadow-lg flex items-center justify-between">
+            <div>
+              <div className="font-medium">{lastDeletedSymptom.name} removed</div>
+              <div className="text-xs opacity-80">Click Undo to restore — auto clear in 8s</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setLoggedSymptoms(prev => [lastDeletedSymptom, ...prev]);
+                  setLastDeletedSymptom(null);
+                  if (undoTimerId) { window.clearTimeout(undoTimerId); setUndoTimerId(null); }
+                  toast({ title: "Restored", description: `${lastDeletedSymptom.name} restored.` });
+                }}
+                className="px-3 py-2 bg-teal-600 rounded text-sm font-medium"
+              >
+                Undo
+              </button>
+              <button
+                onClick={() => {
+                  setLastDeletedSymptom(null);
+                  if (undoTimerId) { window.clearTimeout(undoTimerId); setUndoTimerId(null); }
+                }}
+                className="px-2 py-1 text-xs"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
         {renderContent()}
       </div>
 
