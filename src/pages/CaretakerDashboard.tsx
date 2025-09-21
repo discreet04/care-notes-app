@@ -117,9 +117,9 @@ const CaretakerDashboard: React.FC = () => {
       case "medium":
         return "bg-amber-100 text-amber-800 border-amber-200";
       case "low":
-        return "bg-yellow-50 text-yellow-800 border-yellow-100";
+        return "bg-amber-50 text-amber-800 border-amber-100";
       default:
-        return "bg-amber-50 text-amber-700 border-amber-100";
+        return "bg-stone-50 text-stone-700 border-stone-100";
     }
   };
 
@@ -233,7 +233,7 @@ const CaretakerDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-yellow-100 to-amber-200 text-stone-900">
+          <Card className="bg-gradient-to-r from-amber-100 to-amber-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>

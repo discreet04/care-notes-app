@@ -32,9 +32,9 @@ const PatientDashboard = () => {
   const [showMedicationForm, setShowMedicationForm] = useState(false);
 
   const [symptoms, setSymptoms] = useState([
-    { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-rose-600" },
-    { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-amber-600" },
-    { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-rose-600" }
+    { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-emerald-600" },
+    { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-teal-600" },
+    { id: 3, name: "Heart Rate", value: "72 BPM", status: "normal", icon: Activity, color: "text-emerald-600" }
   ]);
 
   const { toast } = useToast();
@@ -254,9 +254,9 @@ const PatientDashboard = () => {
   const renderHomeContent = () => (
     <div className="space-y-6 pb-[80px]">
       {showMedicationForm && (
-        <Card className="border-2 border-amber-200 bg-amber-50">
+        <Card className="border-2 border-teal-200 bg-teal-50">
           <CardHeader>
-            <CardTitle className="text-lg text-amber-700">{t('addNewMedicationTitle')}</CardTitle>
+            <CardTitle className="text-lg text-teal-700">{t('addNewMedicationTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -312,7 +312,7 @@ const PatientDashboard = () => {
             <div className="flex gap-3 pt-4">
               <Button
                 onClick={handleAddMedication}
-                className="bg-amber-600 text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-amber-700"
+                className="bg-teal-600 text-white px-8 py-3 rounded-xl text-base font-semibold hover:bg-teal-700"
               >
                 {t('addMedication')}
               </Button>
@@ -328,10 +328,10 @@ const PatientDashboard = () => {
         </Card>
       )}
 
-      <Card className="bg-gradient-to-br from-amber-50 to-amber-50 border-amber-200">
+      <Card className="bg-gradient-to-br from-teal-50 to-teal-50 border-teal-200">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl text-amber-700 flex items-center gap-3">
+            <CardTitle className="text-xl text-teal-700 flex items-center gap-3">
               <Pill className="h-6 w-6" />
               {t('todaysMedications')}
             </CardTitle>
@@ -340,7 +340,7 @@ const PatientDashboard = () => {
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => setShowMedicationForm(!showMedicationForm)}
-                    className="bg-amber-600 text-white hover:bg-amber-700 rounded-full px-4 py-2"
+                    className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4 py-2"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     <span className="hidden sm:inline">{t('addNewMedication')}</span>
@@ -356,8 +356,8 @@ const PatientDashboard = () => {
         <CardContent>
           {medications.length === 0 ? (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Pill className="h-8 w-8 text-amber-700" />
+              <div className="w-16 h-16 bg-teal-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Pill className="h-8 w-8 text-teal-700" />
               </div>
               <p className="text-lg text-muted-foreground mb-2">{t('noMedicationsYet')}</p>
               <p className="text-sm text-muted-foreground">Add your first medication to get started</p>
@@ -365,11 +365,11 @@ const PatientDashboard = () => {
           ) : (
             <div className="space-y-4">
               {medications.map((med) => (
-                <div key={med.id} className="bg-white rounded-xl p-4 border border-amber-200 shadow-sm">
+                <div key={med.id} className="bg-white rounded-xl p-4 border border-teal-200 shadow-sm">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center">
                           <Pill className="h-5 w-5 text-white" />
                         </div>
                         <h3 className="font-bold text-lg text-foreground">{med.name}</h3>
@@ -384,15 +384,15 @@ const PatientDashboard = () => {
                       )}
                     </div>
                     <div className="text-right ml-4">
-                      <div className="flex items-center text-amber-700 mb-2">
+                      <div className="flex items-center text-teal-700 mb-2">
                         <Clock className="h-4 w-4 mr-1" />
                         <span className="text-sm font-medium">{med.time || "No time set"}</span>
                       </div>
                       {med.time && (
                         <div className={`text-xs px-3 py-1 rounded-full mb-3 font-medium ${
-                          getMedicationStatus(med.time) === 'urgent' ? 'bg-red-100 text-red-800' :
-                          getMedicationStatus(med.time) === 'soon' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-rose-100 text-rose-800'
+                          getMedicationStatus(med.time) === 'urgent' ? 'bg-rose-100 text-rose-800' :
+                          getMedicationStatus(med.time) === 'soon' ? 'bg-amber-100 text-amber-800' :
+                          'bg-emerald-100 text-emerald-800'
                         }`}>
                           {calculateTimeUntilDose(med.time)}
                         </div>
@@ -400,11 +400,11 @@ const PatientDashboard = () => {
                       <div className="flex gap-2 justify-end items-center">
                         <Button
                           size="sm"
-                          className="bg-amber-600 text-white hover:bg-amber-700 rounded-full px-4"
+                          className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4"
                         >
                           ✓ {t('taken')}
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => removeMedication(med.id)} className="text-red-600">
+                        <Button size="sm" variant="ghost" onClick={() => removeMedication(med.id)} className="text-rose-600">
                           <Trash className="h-4 w-4" />
                         </Button>
                       </div>
@@ -417,23 +417,23 @@ const PatientDashboard = () => {
         </CardContent>
       </Card>
 
-      <div className="bg-gradient-to-br from-rose-200 to-amber-200 p-6 rounded-2xl text-amber-700 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-rose-200 to-teal-200 p-6 rounded-2xl text-stone-700 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-1">{t('greeting')}</h1>
-              <p className="text-amber-600 text-lg">{t('subtitle')}</p>
+              <p className="text-stone-600 text-lg">{t('subtitle')}</p>
             </div>
             <div className="text-4xl">🙏</div>
           </div>
           <div className="mt-6">
-            <p className="text-amber-600 text-sm mb-3">It's time to Check Your</p>
+            <p className="text-stone-600 text-sm mb-3">It's time to Check Your</p>
             <p className="text-xl font-semibold">Blood Pressure</p>
-            <p className="text-sm text-amber-500 mt-1">Yesterday's Reading: 140 mg/dl</p>
+            <p className="text-sm text-stone-500 mt-1">Yesterday's Reading: 140 mg/dl</p>
             <div className="flex gap-3 mt-4">
               <Button
                 variant="ghost"
-                className="text-amber-700 border border-amber-300 px-6 py-2 rounded-full hover:bg-amber-50"
+                className="text-stone-700 border border-stone-300 px-6 py-2 rounded-full hover:bg-stone-50"
                 onClick={() => {
                   toast({
                     title: "Blood Pressure Check",
@@ -450,11 +450,11 @@ const PatientDashboard = () => {
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
       </div>
 
-      <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
+      <Card className="bg-gradient-to-br from-amber-100 to-amber-50 border-amber-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-14 h-14 bg-gradient-to-br from-yellow-200 to-orange-200 rounded-2xl flex items-center justify-center mr-4 shadow-sm">
+              <div className="w-14 h-14 bg-gradient-to-br from-amber-200 to-orange-200 rounded-2xl flex items-center justify-center mr-4 shadow-sm">
                 <span className="text-2xl">🤝</span>
               </div>
               <div>
@@ -462,7 +462,7 @@ const PatientDashboard = () => {
                 <p className="text-sm text-muted-foreground">{t('callCaretaker')}</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-yellow-500">
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-amber-500">
               <Phone className="h-6 w-6" />
             </Button>
           </div>
@@ -489,7 +489,7 @@ const PatientDashboard = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Activity className="h-5 w-5 text-amber-600" />
+            <Activity className="h-5 w-5 text-teal-600" />
             {t('todaysVitals')}
           </CardTitle>
         </CardHeader>
@@ -498,7 +498,7 @@ const PatientDashboard = () => {
             {symptoms.map((symptom) => {
               const Icon = symptom.icon;
               return (
-                <div key={symptom.id} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                <div key={symptom.id} className="flex items-center justify-between p-3 bg-stone-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Icon className={`h-6 w-6 ${symptom.color}`} />
                     <div>
@@ -519,7 +519,7 @@ const PatientDashboard = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Plus className="h-5 w-5 text-amber-600" />
+            <Plus className="h-5 w-5 text-teal-600" />
             Log Symptom
           </CardTitle>
         </CardHeader>
@@ -534,7 +534,7 @@ const PatientDashboard = () => {
                     type="button"
                     onClick={() => setNewSymptom({ ...newSymptom, name: s })}
                     className={`text-left p-3 rounded-lg border ${
-                      newSymptom.name === s ? "border-amber-600 bg-amber-50" : "border-amber-100 bg-white"
+                      newSymptom.name === s ? "border-teal-600 bg-teal-50" : "border-stone-100 bg-white"
                     }`}
                   >
                     <div className="font-medium">{s}</div>
@@ -564,11 +564,11 @@ const PatientDashboard = () => {
                     className={`flex-1 p-3 rounded-lg border font-medium ${
                       newSymptom.severity === level
                         ? level === "mild"
-                          ? "bg-rose-50 border-rose-400"
+                          ? "bg-emerald-50 border-emerald-400"
                           : level === "moderate"
-                          ? "bg-yellow-50 border-yellow-400"
-                          : "bg-red-50 border-red-400"
-                        : "bg-white border-amber-100"
+                          ? "bg-amber-50 border-amber-400"
+                          : "bg-rose-50 border-rose-400"
+                        : "bg-white border-stone-100"
                     }`}
                   >
                     {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -588,7 +588,7 @@ const PatientDashboard = () => {
             </div>
 
             <div className="pt-1">
-              <Button className="w-full bg-amber-600 text-white rounded-xl py-3" onClick={addSymptom}>
+              <Button className="w-full bg-teal-600 text-white rounded-xl py-3" onClick={addSymptom}>
                 <Plus className="h-4 w-4 mr-2 inline" /> Add Symptom
               </Button>
             </div>
@@ -609,32 +609,32 @@ const PatientDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium text-base">{s.name}</div>
-                        <div className="text-xs text-amber-400">{new Date(s.time).toLocaleString()}</div>
+                        <div className="text-xs text-stone-400">{new Date(s.time).toLocaleString()}</div>
                       </div>
                       <div className="ml-3">
                         <Badge
                           className={`px-3 py-1 text-sm ${
                             s.severity === "mild"
-                              ? "bg-rose-100 text-rose-700"
+                              ? "bg-emerald-100 text-emerald-700"
                               : s.severity === "moderate"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-rose-100 text-rose-700"
                           }`}
                         >
                           {s.severity.charAt(0).toUpperCase() + s.severity.slice(1)}
                         </Badge>
                       </div>
                     </div>
-                    {s.notes && <p className="mt-2 text-sm text-amber-600">{s.notes}</p>}
+                    {s.notes && <p className="mt-2 text-sm text-stone-600">{s.notes}</p>}
                   </div>
 
                   <div className="flex flex-col items-end gap-2">
                     <button
                       onClick={() => removeLoggedSymptom(s.id)}
-                      className="p-2 rounded-full hover:bg-amber-50"
+                      className="p-2 rounded-full hover:bg-stone-50"
                       aria-label="Delete symptom"
                     >
-                      <Trash className="h-4 w-4 text-amber-500" />
+                      <Trash className="h-4 w-4 text-stone-500" />
                     </button>
                   </div>
                 </div>
@@ -657,13 +657,13 @@ const PatientDashboard = () => {
             />
           </div>
           <div className="space-y-3">
-            <div className="p-3 bg-amber-100 rounded-lg">
+            <div className="p-3 bg-teal-100 rounded-lg">
               <p className="text-sm">🌿 <strong>{t('turmericMilk')}</strong></p>
             </div>
-            <div className="p-3 bg-amber-100 rounded-lg">
+            <div className="p-3 bg-teal-100 rounded-lg">
               <p className="text-sm">🧘 <strong>{t('pranayama')}</strong></p>
             </div>
-            <div className="p-3 bg-amber-100 rounded-lg">
+            <div className="p-3 bg-teal-100 rounded-lg">
               <p className="text-sm">☕ <strong>{t('tulsiTea')}</strong></p>
             </div>
           </div>
@@ -704,11 +704,11 @@ const PatientDashboard = () => {
                   />
                 </div>
                 <div className="p-6 -mt-8 relative">
-                  <div className="w-16 h-16 bg-amber-600 rounded-full flex items-center justify-center mb-4 border-4 border-amber-100">
+                  <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center mb-4 border-4 border-stone-100">
                     <User className="h-8 w-8 text-white" />
                   </div>
                   <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
-                  <p className="text-amber-400">Age: 68 • Patient ID: #12345</p>
+                  <p className="text-stone-400">Age: 68 • Patient ID: #12345</p>
                   <Button size="sm" className="mt-3">
                     <Edit className="h-4 w-4 mr-2" />
                     {t('editProfile')}
@@ -723,17 +723,17 @@ const PatientDashboard = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                    <Phone className="h-5 w-5 text-amber-600" />
+                  <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-lg">
+                    <Phone className="h-5 w-5 text-teal-600" />
                     <div>
-                      <p className="text-sm text-amber-400">{t('phone')}</p>
+                      <p className="text-sm text-stone-400">{t('phone')}</p>
                       <p className="font-medium">+91 98765 43210</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
-                    <MapPin className="h-5 w-5 text-amber-600" />
+                  <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-lg">
+                    <MapPin className="h-5 w-5 text-teal-600" />
                     <div>
-                      <p className="text-sm text-amber-400">{t('address')}</p>
+                      <p className="text-sm text-stone-400">{t('address')}</p>
                       <p className="font-medium">123 Gandhi Nagar, Delhi</p>
                     </div>
                   </div>
@@ -754,13 +754,13 @@ const PatientDashboard = () => {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-3 bg-rose-100 rounded-lg">
-                    <p className="text-2xl font-bold text-rose-700">7</p>
-                    <p className="text-sm text-amber-400">Days Med Compliant</p>
+                  <div className="text-center p-3 bg-emerald-100 rounded-lg">
+                    <p className="text-2xl font-bold text-emerald-700">7</p>
+                    <p className="text-sm text-stone-400">Days Med Compliant</p>
                   </div>
-                  <div className="text-center p-3 bg-amber-100 rounded-lg">
-                    <p className="text-2xl font-bold text-amber-700">5</p>
-                    <p className="text-sm text-amber-400">Active Medications</p>
+                  <div className="text-center p-3 bg-teal-100 rounded-lg">
+                    <p className="text-2xl font-bold text-teal-700">5</p>
+                    <p className="text-sm text-stone-400">Active Medications</p>
                   </div>
                 </div>
               </CardContent>
@@ -771,28 +771,28 @@ const PatientDashboard = () => {
                 <CardTitle className="text-lg">परिवार संपर्क (Family Contacts)</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-stone-50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center">
                       <span className="text-white font-medium">S</span>
                     </div>
                     <div>
                       <p className="font-medium">Sunita Sharma (Daughter)</p>
-                      <p className="text-sm text-amber-400">Primary Caretaker</p>
+                      <p className="text-sm text-stone-400">Primary Caretaker</p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline">
                     <Phone className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-stone-50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                      <span className="text-amber-700 font-medium">A</span>
+                    <div className="w-10 h-10 bg-stone-100 rounded-full flex items-center justify-center">
+                      <span className="text-stone-700 font-medium">A</span>
                     </div>
                     <div>
                       <p className="font-medium">Dr. Amit Patel</p>
-                      <p className="text-sm text-amber-400">Family Doctor</p>
+                      <p className="text-sm text-stone-400">Family Doctor</p>
                     </div>
                   </div>
                   <Button size="sm" variant="outline">
@@ -819,12 +819,12 @@ const PatientDashboard = () => {
       case "panic":
         return (
           <div className="space-y-4">
-            <Card className="border-red-400">
+            <Card className="border-rose-400">
               <CardHeader>
-                <CardTitle className="text-xl text-red-500">Emergency Panic Button</CardTitle>
+                <CardTitle className="text-xl text-rose-500">Emergency Panic Button</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button className="w-full bg-red-400 text-white btn-elderly">
+                <Button className="w-full bg-rose-400 text-white btn-elderly">
                   <AlertTriangle className="h-6 w-6 mr-2" />
                   Emergency Help
                 </Button>
@@ -848,7 +848,7 @@ const PatientDashboard = () => {
         >
           <Menu className="h-6 w-6" />
         </Button>
-        <h1 className="text-xl font-bold text-amber-700">
+        <h1 className="text-xl font-bold text-stone-700">
           {t(activeTab === "home" ? "home" :
             activeTab === "symptoms" ? "symptoms" :
               activeTab === "ai-helper" ? "aiHelper" :
@@ -862,18 +862,18 @@ const PatientDashboard = () => {
       <div className="p-4">
         {/* Demo controls */}
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-medium">
+          <div className="text-sm px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-medium">
             Demo Mode — Local/Server
           </div>
 
           <div className="flex gap-2">
-            <Button size="sm" onClick={exportSymptomsCSV} className="bg-amber-600 text-white">
+            <Button size="sm" onClick={exportSymptomsCSV} className="bg-teal-600 text-white">
               Export Symptoms
             </Button>
             <Button size="sm" onClick={exportMedicationsCSV} variant="outline">
               Export Meds
             </Button>
-            <Button size="sm" onClick={clearLocalData} className="bg-red-600 text-white">
+            <Button size="sm" onClick={clearLocalData} className="bg-rose-600 text-white">
               Clear Saved Data
             </Button>
           </div>
@@ -881,7 +881,7 @@ const PatientDashboard = () => {
 
         {/* Undo banner */}
         {lastDeletedSymptom && (
-          <div className="fixed left-1/2 -translate-x-1/2 bottom-20 z-50 w-[90%] max-w-xl p-3 bg-amber-700 text-white rounded-lg shadow-lg flex items-center justify-between">
+          <div className="fixed left-1/2 -translate-x-1/2 bottom-20 z-50 w-[90%] max-w-xl p-3 bg-stone-700 text-white rounded-lg shadow-lg flex items-center justify-between">
             <div>
               <div className="font-medium">{lastDeletedSymptom.name} removed</div>
               <div className="text-xs opacity-80">Click Undo to restore — auto clear in 8s</div>
@@ -894,7 +894,7 @@ const PatientDashboard = () => {
                   if (undoTimerId) { window.clearTimeout(undoTimerId); setUndoTimerId(null); }
                   toast({ title: "Restored", description: `${lastDeletedSymptom.name} restored.` });
                 }}
-                className="px-3 py-2 bg-amber-600 rounded text-sm font-medium"
+                className="px-3 py-2 bg-teal-600 rounded text-sm font-medium"
               >
                 Undo
               </button>
