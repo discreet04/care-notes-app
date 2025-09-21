@@ -115,17 +115,17 @@ const CaretakerDashboard: React.FC = () => {
       case "high":
         return "bg-rose-100 text-rose-800 border-rose-200";
       case "medium":
-        return "bg-amber-100 text-amber-800 border-amber-200";
+        return "bg-amber-100 text-teal-800 border-teal-200";
       case "low":
-        return "bg-amber-50 text-amber-800 border-amber-100";
+        return "bg-yellow-50 text-yellow-800 border-yellow-100";
       default:
-        return "bg-stone-50 text-stone-700 border-stone-100";
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getComplianceColor = (compliance: number) => {
-    if (compliance >= 90) return "text-amber-800";
-    if (compliance >= 70) return "text-amber-700";
+    if (compliance >= 90) return "text-teal-800";
+    if (compliance >= 70) return "text-teal-700";
     return "text-rose-700";
   };
 
@@ -180,7 +180,7 @@ const CaretakerDashboard: React.FC = () => {
   const lowComplianceCount = patients.filter((p) => p.medicationCompliance < 70).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-amber-100 to-amber-50 text-stone-900">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-amber-50 text-stone-900">
       {/* Header */}
       <header className="bg-white/90 shadow-sm border-b p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ const CaretakerDashboard: React.FC = () => {
       <div className="p-4 md:p-6 space-y-6">
         {/* Quick stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-amber-200 to-amber-300 text-stone-900">
+          <Card className="bg-gradient-to-r from-teal-200 to-emerald-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -221,7 +221,7 @@ const CaretakerDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-rose-200 to-rose-300 text-stone-900">
+          <Card className="bg-gradient-to-r from-rose-200 to-amber-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -233,7 +233,7 @@ const CaretakerDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-amber-100 to-amber-200 text-stone-900">
+          <Card className="bg-gradient-to-r from-emerald-100 to-amber-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -249,7 +249,7 @@ const CaretakerDashboard: React.FC = () => {
         {/* Invitations */}
         {invitations.length > 0 && (
           <Card className="shadow-sm">
-            <CardHeader className="bg-amber-50">
+            <CardHeader className="bg-teal-50">
               <CardTitle className="text-lg flex items-center gap-2">
                 <UserCheck className="h-4 w-4" />
                 Patient Invitations
@@ -261,7 +261,7 @@ const CaretakerDashboard: React.FC = () => {
             <CardContent className="p-6 space-y-4">
               <TooltipProvider>
                 {invitations.map((invitation) => (
-                  <div key={invitation.id} className="border-l-4 border-amber-200 bg-amber-50 rounded-lg p-4">
+                  <div key={invitation.id} className="border-l-4 border-teal-200 bg-teal-50 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <h3 className="font-semibold text-stone-900">{invitation.patientName}</h3>
@@ -280,7 +280,7 @@ const CaretakerDashboard: React.FC = () => {
                             <Button
                               size="sm"
                               aria-label={`Accept ${invitation.patientName}`}
-                              className="flex items-center bg-amber-100 text-amber-800 hover:bg-amber-200"
+                              className="flex items-center bg-teal-100 text-teal-800 hover:bg-teal-200"
                               onClick={() => handleAcceptInvitation(invitation.id)}
                             >
                               <UserCheck className="h-4 w-4" />
@@ -320,7 +320,7 @@ const CaretakerDashboard: React.FC = () => {
 
         {/* My Patients */}
         <Card className="shadow-sm">
-          <CardHeader className="bg-amber-50 flex items-center justify-between">
+          <CardHeader className="bg-teal-50 flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
               <Heart className="h-4 w-4 text-rose-500" />
               My Patients
@@ -331,7 +331,7 @@ const CaretakerDashboard: React.FC = () => {
 
             <Button
               onClick={handleAddPatientClick}
-              className="bg-amber-200 text-stone-900 hover:bg-amber-300"
+              className="bg-teal-200 text-stone-900 hover:bg-teal-300"
               size="sm"
               aria-label="Add patient"
             >
@@ -355,7 +355,7 @@ const CaretakerDashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
-                  <Input placeholder="Search patients..." className="pl-10 border-stone-200 focus:border-amber-300 focus:ring-amber-300" />
+                  <Input placeholder="Search patients..." className="pl-10 border-stone-200 focus:border-teal-300 focus:ring-teal-300" />
                 </div>
 
                 {patients.map((patient) => (
@@ -395,7 +395,7 @@ const CaretakerDashboard: React.FC = () => {
                                   <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                                 </>
                               ) : (
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
                               )}
                             </span>
                             <span>Last seen: {patient.lastActivity}</span>
@@ -425,7 +425,7 @@ const CaretakerDashboard: React.FC = () => {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-amber-800 flex items-center gap-1">
+                          <p className="text-sm text-teal-800 flex items-center gap-1">
                             <CheckCircle className="h-4 w-4" />
                             No symptoms reported
                           </p>
@@ -441,7 +441,7 @@ const CaretakerDashboard: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <div className="flex-1 bg-stone-200 rounded-full h-2 overflow-hidden">
                             <div
-                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-amber-600" : patient.medicationCompliance >= 70 ? "bg-amber-400" : "bg-rose-500"}`}
+                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-teal-600" : patient.medicationCompliance >= 70 ? "bg-emerald-400" : "bg-rose-500"}`}
                               style={{ width: `${patient.medicationCompliance}%` }}
                             />
                           </div>
