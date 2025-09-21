@@ -3,7 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { Menu, Plus, UserCheck, UserX, Search, Users, AlertTriangle, Pill, Heart, Activity, Calendar, Clock, TrendingUp, CheckCircle, XCircle } from "lucide-react";
+import {
+  Menu,
+  Plus,
+  UserCheck,
+  UserX,
+  Search,
+  Users,
+  AlertTriangle,
+  Pill,
+  Heart,
+  Activity,
+  Calendar,
+  Clock,
+  TrendingUp,
+  Check,
+  X,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -46,17 +64,13 @@ const CaretakerDashboard: React.FC = () => {
     {
       id: 3,
       patientName: "Alice Johnson",
-      phone: "‪+91 9876543211‬",
+      phone: "+91 9876543211",
       age: 72,
       lastActivity: "2 hours ago",
       urgentAttention: true,
       symptoms: ["Chest pain", "Shortness of breath"],
       medicationCompliance: 85,
-      vitals: {
-        heartRate: 95,
-        bloodPressure: "140/90",
-        temperature: "99.2°F",
-      },
+      vitals: { heartRate: 95, bloodPressure: "140/90", temperature: "99.2°F" },
       nextAppointment: "Tomorrow, 2:00 PM",
       chronicConditions: ["Hypertension", "Diabetes"],
       riskLevel: "high",
@@ -64,17 +78,13 @@ const CaretakerDashboard: React.FC = () => {
     {
       id: 4,
       patientName: "Robert Chen",
-      phone: "‪+91 8765432108‬",
+      phone: "+91 8765432108",
       age: 68,
       lastActivity: "30 minutes ago",
       urgentAttention: false,
       symptoms: ["Mild fatigue"],
       medicationCompliance: 95,
-      vitals: {
-        heartRate: 72,
-        bloodPressure: "120/80",
-        temperature: "98.6°F",
-      },
+      vitals: { heartRate: 72, bloodPressure: "120/80", temperature: "98.6°F" },
       nextAppointment: "Friday, 10:00 AM",
       chronicConditions: ["Arthritis"],
       riskLevel: "low",
@@ -82,17 +92,13 @@ const CaretakerDashboard: React.FC = () => {
     {
       id: 5,
       patientName: "Margaret Davis",
-      phone: "‪+91 7654321098‬",
+      phone: "+91 7654321098",
       age: 78,
       lastActivity: "1 day ago",
       urgentAttention: false,
       symptoms: [],
       medicationCompliance: 60,
-      vitals: {
-        heartRate: 78,
-        bloodPressure: "130/85",
-        temperature: "98.4°F",
-      },
+      vitals: { heartRate: 78, bloodPressure: "130/85", temperature: "98.4°F" },
       nextAppointment: "Next Monday, 11:00 AM",
       chronicConditions: ["Osteoporosis", "High Cholesterol"],
       riskLevel: "medium",
@@ -100,27 +106,27 @@ const CaretakerDashboard: React.FC = () => {
   ]);
 
   const [invitations, setInvitations] = useState<Invitation[]>([
-    { id: 1, patientName: "John Doe", phone: "‪+91 9876543210‬", timestamp: "2 hours ago", age: 65 },
-    { id: 2, patientName: "Mary Smith", phone: "‪+91 8765432109‬", timestamp: "1 day ago", age: 71 },
+    { id: 1, patientName: "John Doe", phone: "+91 9876543210", timestamp: "2 hours ago", age: 65 },
+    { id: 2, patientName: "Mary Smith", phone: "+91 8765432109", timestamp: "1 day ago", age: 71 },
   ]);
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
       case "high":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-rose-100 text-rose-800 border-rose-200";
       case "medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "low":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-yellow-50 text-yellow-800 border-yellow-100";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getComplianceColor = (compliance: number) => {
-    if (compliance >= 90) return "text-green-600";
-    if (compliance >= 70) return "text-yellow-600";
-    return "text-red-600";
+    if (compliance >= 90) return "text-amber-800";
+    if (compliance >= 70) return "text-amber-700";
+    return "text-rose-700";
   };
 
   const handleAcceptInvitation = (id: number) => {
@@ -137,11 +143,7 @@ const CaretakerDashboard: React.FC = () => {
       urgentAttention: false,
       symptoms: [],
       medicationCompliance: 100,
-      vitals: {
-        heartRate: 75,
-        bloodPressure: "120/80",
-        temperature: "98.6°F",
-      },
+      vitals: { heartRate: 75, bloodPressure: "120/80", temperature: "98.6°F" },
       nextAppointment: "To be scheduled",
       chronicConditions: [],
       riskLevel: "low",
@@ -178,99 +180,111 @@ const CaretakerDashboard: React.FC = () => {
   const lowComplianceCount = patients.filter((p) => p.medicationCompliance < 70).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header with Hamburger Menu */}
-      <header className="bg-white shadow-sm border-b p-4 flex items-center justify-between">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setSidebarOpen(true)}
-          className="elderly-focus"
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-        <h1 className="text-xl font-bold text-gray-900">Caretaker Dashboard</h1>
-        <div className="w-10" />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-amber-100 to-amber-50 text-stone-900">
+      {/* Header */}
+      <header className="bg-white/90 shadow-sm border-b p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(true)}
+            className="elderly-focus text-stone-800"
+            aria-label="Open sidebar"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <h1 className="text-lg font-semibold">Caretaker Dashboard</h1>
+        </div>
+        <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center bg-stone-50 border border-stone-200 rounded-full px-3 py-1">
+            <Search className="h-4 w-4 text-stone-500 mr-2" />
+            <Input placeholder="Search patients..." className="bg-transparent border-0 p-0 focus:ring-0" />
+          </div>
+        </div>
+        <div className="w-6" />
       </header>
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="caretaker" />
 
-      <div className="p-4 space-y-6">
-        {/* Quick Stats */}
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Quick stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+          <Card className="bg-gradient-to-r from-amber-200 to-amber-300 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100">Total Patients</p>
+                  <p className="text-sm">Total Patients</p>
                   <p className="text-2xl font-bold">{patients.length}</p>
                 </div>
-                <Users className="h-8 w-8 text-blue-200" />
+                <Users className="h-7 w-7 text-stone-800/60" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-red-500 to-red-600 text-white">
+          <Card className="bg-gradient-to-r from-rose-200 to-rose-300 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-red-100">Urgent Attention</p>
+                  <p className="text-sm">Urgent Attention</p>
                   <p className="text-2xl font-bold">{urgentPatientsCount}</p>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-red-200" />
+                <AlertTriangle className="h-7 w-7 text-stone-800/60" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+          <Card className="bg-gradient-to-r from-yellow-100 to-amber-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100">Low Compliance</p>
+                  <p className="text-sm">Low Compliance</p>
                   <p className="text-2xl font-bold">{lowComplianceCount}</p>
                 </div>
-                <Pill className="h-8 w-8 text-orange-200" />
+                <Pill className="h-7 w-7 text-stone-800/60" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Patient Invitations */}
+        {/* Invitations */}
         {invitations.length > 0 && (
-          <Card className="shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100">
-              <CardTitle className="text-xl flex items-center gap-2">
-                <UserCheck className="h-5 w-5" />
+          <Card className="shadow-sm">
+            <CardHeader className="bg-amber-50">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <UserCheck className="h-4 w-4" />
                 Patient Invitations
                 <Badge variant="secondary" className="ml-2">
                   {invitations.length}
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-6">
+            <CardContent className="p-6 space-y-4">
               <TooltipProvider>
                 {invitations.map((invitation) => (
-                  <div key={invitation.id} className="border-l-4 border-purple-400 bg-purple-50 rounded-lg p-4">
+                  <div key={invitation.id} className="border-l-4 border-amber-200 bg-amber-50 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg text-gray-900">{invitation.patientName}</h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                        <h3 className="font-semibold text-stone-900">{invitation.patientName}</h3>
+                        <div className="flex items-center gap-3 text-sm text-stone-600 mt-1">
                           <span>{invitation.phone}</span>
                           <span>•</span>
                           <span>Age: {invitation.age ?? "—"}</span>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Invited {invitation.timestamp}</p>
+                        <p className="text-xs text-stone-500 mt-1">Invited {invitation.timestamp}</p>
                       </div>
-                      <div className="flex gap-2">
+
+                      <div className="flex gap-2 items-center">
+                        {/* Accept (icon-only on small screens) */}
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
+                              aria-label={`Accept ${invitation.patientName}`}
+                              className="flex items-center bg-amber-100 text-amber-800 hover:bg-amber-200"
                               onClick={() => handleAcceptInvitation(invitation.id)}
                             >
-                              <UserCheck className="h-4 w-4 mr-1" />
-                              Accept
+                              <UserCheck className="h-4 w-4" />
+                              <span className="hidden md:inline ml-2">Accept</span>
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -278,16 +292,17 @@ const CaretakerDashboard: React.FC = () => {
                           </TooltipContent>
                         </Tooltip>
 
+                        {/* Reject (icon-only on small screens) */}
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="border-red-300 text-red-600 hover:bg-red-50"
+                              aria-label={`Reject ${invitation.patientName}`}
+                              className="flex items-center bg-rose-100 text-rose-800 hover:bg-rose-200"
                               onClick={() => handleRejectInvitation(invitation.id)}
                             >
-                              <UserX className="h-4 w-4 mr-1" />
-                              Reject
+                              <UserX className="h-4 w-4" />
+                              <span className="hidden md:inline ml-2">Reject</span>
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -304,159 +319,164 @@ const CaretakerDashboard: React.FC = () => {
         )}
 
         {/* My Patients */}
-        <Card className="shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 flex flex-row items-center justify-between">
-            <CardTitle className="text-xl flex items-center gap-2">
-              <Heart className="h-5 w-5 text-red-500" />
+        <Card className="shadow-sm">
+          <CardHeader className="bg-amber-50 flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Heart className="h-4 w-4 text-rose-500" />
               My Patients
               <Badge variant="secondary" className="ml-2">
                 {patients.length}
               </Badge>
             </CardTitle>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddPatientClick}>
-              <Plus className="h-5 w-5 mr-2" />
-              Add Patient
+
+            <Button
+              onClick={handleAddPatientClick}
+              className="bg-amber-200 text-stone-900 hover:bg-amber-300"
+              size="sm"
+              aria-label="Add patient"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              <span className="hidden md:inline">Add Patient</span>
             </Button>
           </CardHeader>
+
           <CardContent className="p-6">
             {patients.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
-                <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Users className="h-12 w-12 text-gray-400" />
+              <div className="text-center py-12 border border-stone-200 rounded-lg bg-stone-50">
+                <div className="w-24 h-24 bg-stone-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <Users className="h-12 w-12 text-stone-400" />
                 </div>
-                <h2 className="text-xl font-semibold mb-2 text-gray-900">No Patients Yet</h2>
-                <p className="text-gray-600 max-w-sm mx-auto">
-                  When you accept an invitation, the patient will appear here. You can also add new patients to monitor their health.
+                <h2 className="text-lg font-semibold text-stone-900">No Patients Yet</h2>
+                <p className="text-stone-600 max-w-sm mx-auto mt-2">
+                  Accept invitations or add new patients to begin monitoring their health.
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="relative mb-6">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <Input placeholder="Search patients..." className="pl-10 border-gray-200 focus:border-blue-400 focus:ring-blue-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+                  <Input placeholder="Search patients..." className="pl-10 border-stone-200 focus:border-amber-300 focus:ring-amber-300" />
                 </div>
 
                 {patients.map((patient) => (
                   <div
                     key={patient.id}
                     className={`border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
-                      patient.urgentAttention ? "border-red-200 bg-red-50" : "border-gray-200 bg-white hover:bg-gray-50"
+                      patient.urgentAttention ? "border-rose-200 bg-rose-50" : "border-stone-200 bg-white hover:bg-stone-50"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-bold text-xl text-gray-900">{patient.patientName}</h3>
+                          <h3 className="font-semibold text-lg text-stone-900">{patient.patientName}</h3>
 
                           <Badge className={`${getRiskLevelColor(patient.riskLevel)} border`}>
                             {String(patient.riskLevel).toUpperCase()} RISK
                           </Badge>
 
                           {patient.urgentAttention && (
-                            <Badge className="bg-red-100 text-red-800 border-red-200 animate-pulse ml-2">
+                            <Badge className="bg-rose-100 text-rose-800 border-rose-200 animate-pulse ml-2">
                               <AlertTriangle className="h-3 w-3 mr-1" />
                               URGENT
                             </Badge>
                           )}
                         </div>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                        <div className="flex items-center gap-4 text-sm text-stone-600 mb-3">
                           <span>{patient.phone}</span>
                           <span>•</span>
                           <span>Age: {patient.age}</span>
                           <span>•</span>
                           <span className="flex items-center gap-2">
-                            <span className="flex items-center gap-2">
-                              <span className="relative flex h-2 w-2">
-                                {patient.urgentAttention ? (
-                                  <>
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                                  </>
-                                ) : (
-                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                )}
-                              </span>
-                              <span>Last seen: {patient.lastActivity}</span>
+                            <span className="relative flex h-2 w-2">
+                              {patient.urgentAttention ? (
+                                <>
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                </>
+                              ) : (
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                              )}
                             </span>
+                            <span>Last seen: {patient.lastActivity}</span>
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Patient Details Grid */}
+                    {/* Details grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                       {/* Symptoms */}
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-700 flex items-center gap-2">
+                        <h4 className="font-medium text-stone-700 flex items-center gap-2">
                           <Activity className="h-4 w-4" />
                           Current Symptoms
                         </h4>
                         {patient.symptoms.length > 0 ? (
-                          <div className="space-y-1">
-                            {patient.symptoms.map((symptom, index) => (
+                          <div className="flex flex-wrap gap-2">
+                            {patient.symptoms.map((symptom, i) => (
                               <Badge
-                                key={index}
+                                key={i}
                                 variant="outline"
-                                className={`${patient.urgentAttention ? "border-red-300 text-red-700" : "border-gray-300 text-gray-700"} text-xs mr-1`}
+                                className={`${patient.urgentAttention ? "border-rose-300 text-rose-700" : "border-stone-300 text-stone-700"} text-xs`}
                               >
                                 {symptom}
                               </Badge>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-green-600 flex items-center gap-1">
-                            <CheckCircle className="h-3 w-3" />
+                          <p className="text-sm text-amber-800 flex items-center gap-1">
+                            <CheckCircle className="h-4 w-4" />
                             No symptoms reported
                           </p>
                         )}
                       </div>
 
-                      {/* Medication Compliance */}
+                      {/* Medication compliance */}
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-700 flex items-center gap-2">
+                        <h4 className="font-medium text-stone-700 flex items-center gap-2">
                           <Pill className="h-4 w-4" />
                           Medication Compliance
                         </h4>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-stone-200 rounded-full h-2 overflow-hidden">
                             <div
-                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-green-500" : patient.medicationCompliance >= 70 ? "bg-yellow-500" : "bg-red-500"}`}
+                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-amber-600" : patient.medicationCompliance >= 70 ? "bg-amber-400" : "bg-rose-500"}`}
                               style={{ width: `${patient.medicationCompliance}%` }}
                             />
                           </div>
-                          <span className={`font-bold text-sm ${getComplianceColor(patient.medicationCompliance)}`}>
+                          <span className={`font-semibold text-sm ${getComplianceColor(patient.medicationCompliance)}`}>
                             {patient.medicationCompliance}%
                           </span>
                         </div>
                         {patient.medicationCompliance < 70 && (
-                          <p className="text-xs text-red-600 flex items-center gap-1">
+                          <p className="text-xs text-rose-700 flex items-center gap-1">
                             <XCircle className="h-3 w-3" />
                             Requires attention
                           </p>
                         )}
                       </div>
 
-                      {/* Vital Signs */}
+                      {/* Vitals */}
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-gray-700 flex items-center gap-2">
+                        <h4 className="font-medium text-stone-700 flex items-center gap-2">
                           <TrendingUp className="h-4 w-4" />
                           Latest Vitals
                         </h4>
                         <div className="text-sm space-y-1">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Heart Rate:</span>
-                            <span className={`font-medium ${patient.vitals.heartRate > 90 ? "text-red-600" : "text-gray-900"}`}>
+                            <span className="text-stone-600">Heart Rate:</span>
+                            <span className={`font-medium ${patient.vitals.heartRate > 90 ? "text-rose-700" : "text-stone-900"}`}>
                               {patient.vitals.heartRate} bpm
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Blood Pressure:</span>
-                            <span className="font-medium text-gray-900">{patient.vitals.bloodPressure}</span>
+                            <span className="text-stone-600">Blood Pressure:</span>
+                            <span className="font-medium text-stone-900">{patient.vitals.bloodPressure}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Temperature:</span>
-                            <span className={`font-medium ${parseFloat(String(patient.vitals.temperature)) > 99 ? "text-red-600" : "text-gray-900"}`}>
+                            <span className="text-stone-600">Temperature:</span>
+                            <span className={`font-medium ${parseFloat(String(patient.vitals.temperature)) > 99 ? "text-rose-700" : "text-stone-900"}`}>
                               {patient.vitals.temperature}
                             </span>
                           </div>
@@ -464,30 +484,30 @@ const CaretakerDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Chronic Conditions & Next Appointment */}
+                    {/* Chronic conditions & appointment */}
                     <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-semibold text-gray-700 text-sm mb-2">Chronic Conditions</h4>
+                        <h4 className="font-medium text-stone-700 text-sm mb-2">Chronic Conditions</h4>
                         {patient.chronicConditions.length > 0 ? (
-                          <div className="flex flex-wrap gap-1">
-                            {patient.chronicConditions.map((condition, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {condition}
+                          <div className="flex flex-wrap gap-2">
+                            {patient.chronicConditions.map((c, i) => (
+                              <Badge key={i} variant="secondary" className="text-xs">
+                                {c}
                               </Badge>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500">None reported</p>
+                          <p className="text-sm text-stone-500">None reported</p>
                         )}
                       </div>
 
                       <div>
-                        <h4 className="font-semibold text-gray-700 text-sm mb-2 flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                        <h4 className="font-medium text-stone-700 text-sm mb-2 flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
                           Next Appointment
                         </h4>
-                        <p className="text-sm text-gray-600 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                        <p className="text-sm text-stone-600 flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
                           {patient.nextAppointment}
                         </p>
                       </div>
