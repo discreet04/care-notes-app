@@ -119,7 +119,7 @@ const CaretakerDashboard: React.FC = () => {
       case "low":
         return "bg-yellow-50 text-yellow-800 border-yellow-100";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-amber-50 text-amber-700 border-amber-100";
     }
   };
 
