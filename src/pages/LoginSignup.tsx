@@ -1,117 +1,169 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Calendar } from 'lucide-react';
-import PatientDashboard from './PatientDashboard.tsx';
-import CaretakerDashboard from './CaretakerDashboard.tsx';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
 const LoginSignup = () => {
-  const [isLogin, setIsLogin] = useState<boolean>(true);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>(''); // State for displaying messages
-  const [userRole, setUserRole] = useState<string | null>(null); // State for user role
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
     fullName: '',
-    age: '',
-    phone: '',
-    address: '',
     role: 'patient'
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // Check for existing user on load
+  useEffect(() => {
+    const savedUser = localStorage.getItem('careconnect_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = () => {
     if (!formData.email || !formData.password) {
-      setMessage('Please fill in email and password.');
+      setError('Please fill in email and password');
       return false;
     }
+
     if (!isLogin) {
       if (formData.password !== formData.confirmPassword) {
-        setMessage('Passwords do not match.');
+        setError('Passwords do not match');
         return false;
       }
       if (!formData.fullName) {
-        setMessage('Please enter your full name.');
+        setError('Please enter your full name');
         return false;
       }
     }
+
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-    
+  const handleSignIn = async () => {
     if (!validateForm()) return;
 
     setLoading(true);
+    setError('');
 
-    if (isLogin) {
-      if (
-        (formData.email === 'patient@demo.com' && formData.password === 'password123')
-      ) {
-        setTimeout(() => {
-          console.log('Login successful');
-          setMessage('Login successful! Welcome back.');
-          setLoading(false);
-          setUserRole('patient');
-        }, 1500);
-      } else if (
-        (formData.email === 'caretaker@demo.com' && formData.password === 'password123')
-      ) {
-        setTimeout(() => {
-          console.log('Login successful');
-          setMessage('Login successful! Welcome back.');
-          setLoading(false);
-          setUserRole('caretaker');
-        }, 1500);
+    // Simulate API call
+    setTimeout(() => {
+      if (formData.email === 'patient@demo.com' && formData.password === 'password123') {
+        const userData = {
+          id: '1',
+          email: 'patient@demo.com',
+          full_name: 'Raj Kumar Sharma',
+          role: 'patient'
+        };
+        setUser(userData);
+        localStorage.setItem('careconnect_user', JSON.stringify(userData));
+      } else if (formData.email === 'caretaker@demo.com' && formData.password === 'password123') {
+        const userData = {
+          id: '2',
+          email: 'caretaker@demo.com',
+          full_name: 'Sunita Sharma',
+          role: 'caretaker'
+        };
+        setUser(userData);
+        localStorage.setItem('careconnect_user', JSON.stringify(userData));
       } else {
-        setTimeout(() => {
-          console.error('Invalid credentials');
-          setMessage('Invalid email or password.');
-          setLoading(false);
-        }, 1500);
+        setError('Invalid email or password. Try demo accounts.');
       }
-    } else {
-      setTimeout(() => {
-        console.log('Signup successful', formData);
-        setMessage('Account created successfully! Please check your email to verify.');
-        setLoading(false);
-      }, 1500);
-    }
+      setLoading(false);
+    }, 1500);
   };
 
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
-    setMessage('');
+  const handleSignUp = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+    setError('');
+
+    // Simulate signup
+    setTimeout(() => {
+      const userData = {
+        id: Date.now().toString(),
+        email: formData.email,
+        full_name: formData.fullName,
+        role: formData.role
+      };
+      setUser(userData);
+      localStorage.setItem('careconnect_user', JSON.stringify(userData));
+      setLoading(false);
+    }, 1500);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('careconnect_user');
     setFormData({
       email: '',
       password: '',
       confirmPassword: '',
       fullName: '',
-      age: '',
-      phone: '',
-      address: '',
+      role: 'patient'
+    });
+    setError('');
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setError('');
+    setFormData({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      fullName: '',
       role: 'patient'
     });
   };
-  
-  // Conditional rendering based on user role
-  if (userRole === 'patient') {
-    return <PatientDashboard />;
+
+  // Success screen when logged in
+  if (user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl text-white">✓</span>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome!</h2>
+          <p className="text-lg text-gray-700 mb-2">{user.full_name}</p>
+          <p className="text-sm text-gray-500 mb-6">Role: {user.role}</p>
+          
+          <div className="space-y-3">
+            <button className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-green-600 transition-all duration-200">
+              {user.role === 'patient' ? 'Go to Patient Dashboard' : 'Go to Caretaker Dashboard'}
+            </button>
+            
+            <button
+              onClick={handleLogout}
+              className="w-full border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
+          
+          <div className="mt-6 p-4 bg-green-50 rounded-xl">
+            <p className="text-sm text-green-700">
+              🎉 Authentication working! Now you can integrate this with your dashboard routing.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
-  
-  if (userRole === 'caretaker') {
-    return <CaretakerDashboard />;
-  }
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -126,7 +178,7 @@ const LoginSignup = () => {
           </p>
         </div>
 
-        {/* Auth Form */}
+        {/* Auth Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
@@ -136,14 +188,14 @@ const LoginSignup = () => {
               {isLogin ? 'Access your health dashboard' : 'Get started with personalized care'}
             </p>
           </div>
-          
-          {message && (
-            <div className={`p-3 rounded-lg text-sm mb-4 text-center font-medium ${message.includes('successful') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {message}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-center">
+              {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             {/* Email Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -158,7 +210,6 @@ const LoginSignup = () => {
                   onChange={handleInputChange}
                   placeholder="Enter your email"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                  required
                 />
               </div>
             </div>
@@ -178,7 +229,6 @@ const LoginSignup = () => {
                     onChange={handleInputChange}
                     placeholder="Enter your full name"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                    required
                   />
                 </div>
               </div>
@@ -198,7 +248,6 @@ const LoginSignup = () => {
                   onChange={handleInputChange}
                   placeholder="Enter your password"
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                  required
                 />
                 <button
                   type="button"
@@ -225,93 +274,34 @@ const LoginSignup = () => {
                     onChange={handleInputChange}
                     placeholder="Confirm your password"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                    required
                   />
                 </div>
               </div>
             )}
 
-            {/* Additional Fields (Signup only) */}
-            {!isLogin && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Age
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="number"
-                      name="age"
-                      value={formData.age}
-                      onChange={handleInputChange}
-                      placeholder="Age"
-                      min="1"
-                      max="120"
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Role
-                  </label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                  >
-                    <option value="patient">Patient</option>
-                    <option value="caretaker">Caretaker</option>
-                  </select>
-                </div>
-              </div>
-            )}
-
+            {/* Role Selection (Signup only) */}
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
+                  Role
                 </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="Enter phone number"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            )}
-
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    placeholder="Enter your address"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
-                  />
-                </div>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-colors"
+                >
+                  <option value="patient">Patient</option>
+                  <option value="caretaker">Caretaker</option>
+                </select>
               </div>
             )}
 
             {/* Submit Button */}
             <button
-              type="submit"
+              onClick={isLogin ? handleSignIn : handleSignUp}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
+              className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 rounded-xl font-semibold hover:from-red-600 hover:to-orange-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
@@ -323,34 +313,26 @@ const LoginSignup = () => {
               )}
             </button>
 
-            {/* Forgot Password (Login only) */}
-            {isLogin && (
-              <div className="text-center">
-                <button
-                  type="button"
-                  className="text-red-500 hover:text-red-600 text-sm font-medium"
-                >
-                  Forgot your password?
-                </button>
-              </div>
-            )}
-
-            {/* Terms and Privacy (Signup only) */}
-            {!isLogin && (
-              <div className="text-center">
-                <p className="text-xs text-gray-500">
-                  By creating an account, you agree to our{' '}
-                  <button type="button" className="text-red-500 hover:underline">
-                    Terms of Service
-                  </button>{' '}
-                  and{' '}
-                  <button type="button" className="text-red-500 hover:underline">
-                    Privacy Policy
-                  </button>
-                </p>
-              </div>
-            )}
-          </form>
+            {/* Quick Login Buttons */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <button
+                onClick={() => {
+                  setFormData({ ...formData, email: 'patient@demo.com', password: 'password123' });
+                }}
+                className="bg-blue-50 text-blue-700 py-2 px-4 rounded-lg text-sm hover:bg-blue-100 transition-colors"
+              >
+                Demo Patient
+              </button>
+              <button
+                onClick={() => {
+                  setFormData({ ...formData, email: 'caretaker@demo.com', password: 'password123' });
+                }}
+                className="bg-green-50 text-green-700 py-2 px-4 rounded-lg text-sm hover:bg-green-100 transition-colors"
+              >
+                Demo Caretaker
+              </button>
+            </div>
+          </div>
 
           {/* Toggle Auth Mode */}
           <div className="mt-6 text-center border-t border-gray-200 pt-6">
@@ -366,35 +348,13 @@ const LoginSignup = () => {
             </p>
           </div>
 
-          {/* Demo Accounts */}
+          {/* Demo Info */}
           <div className="mt-4 p-4 bg-gray-50 rounded-xl">
             <p className="text-sm font-medium text-gray-700 mb-2">Demo Accounts:</p>
             <div className="space-y-1 text-xs text-gray-600">
               <p><strong>Patient:</strong> patient@demo.com / password123</p>
               <p><strong>Caretaker:</strong> caretaker@demo.com / password123</p>
             </div>
-          </div>
-        </div>
-
-        {/* Features Preview */}
-        <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4">
-            <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-              <span className="text-2xl">💊</span>
-            </div>
-            <p className="text-sm font-medium text-gray-700">Medication Tracking</p>
-          </div>
-          <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-              <span className="text-2xl">🤖</span>
-            </div>
-            <p className="text-sm font-medium text-gray-700">AI Health Assistant</p>
-          </div>
-          <div className="bg-white/50 backdrop-blur-sm rounded-xl p-4">
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-              <span className="text-2xl">❤️</span>
-            </div>
-            <p className="text-sm font-medium text-gray-700">Health Monitoring</p>
           </div>
         </div>
       </div>
