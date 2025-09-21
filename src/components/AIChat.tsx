@@ -9,7 +9,11 @@ interface ChatMessage {
   isUser: boolean;
 }
 
-const EnhancedAIChat = () => {
+interface EnhancedAIChatProps {
+  patientContext?: string; // <-- NEW PROP
+}
+
+const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({ patientContext }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -31,105 +35,46 @@ const EnhancedAIChat = () => {
   }, [messages]);
 
   const getAIResponse = async (message: string): Promise<string> => {
-    // Enhanced AI responses based on health context
     const lowerMessage = message.toLowerCase();
-    
+    const contextPrefix = patientContext ? `Patient info: ${patientContext}. ` : ''; // <-- add context
+
     // Medication-related queries
-    if (lowerMessage.includes('medication') || lowerMessage.includes('medicine') || lowerMessage.includes('pill') || lowerMessage.includes('drug')) {
-      const medQueries = [
-        {
-          keywords: ['when', 'time', 'schedule'],
-          responses: [
-            'For best results, take your medications at the same time each day. This helps maintain consistent levels in your body.',
-            'Morning medications are usually best taken 30 minutes before breakfast, unless specified otherwise.',
-            'If you have multiple medications, create a schedule to space them out properly.'
-          ]
-        },
-        {
-          keywords: ['food', 'eat', 'meal'],
-          responses: [
-            'Some medications should be taken with food to reduce stomach irritation, while others work better on an empty stomach.',
-            'Metformin, for example, should always be taken with food to prevent stomach upset.',
-            'Check with your pharmacist about food interactions with your specific medications.'
-          ]
-        },
-        {
-          keywords: ['forgot', 'missed', 'skip'],
-          responses: [
-            'If you miss a dose, take it as soon as you remember, unless it\'s almost time for your next dose.',
-            'Never double up on medications to make up for a missed dose.',
-            'Consider setting phone alarms or using a pill organizer to help remember your medications.'
-          ]
-        }
+    if (lowerMessage.includes('medication') || lowerMessage.includes('pill')) {
+      const medResponses = [
+        'For best results, take your medications at the same time each day.',
+        'Morning medications are usually best taken 30 minutes before breakfast.',
+        'If you miss a dose, take it as soon as you remember unless it is almost time for the next one.'
       ];
-      
-      for (const query of medQueries) {
-        if (query.keywords.some(keyword => lowerMessage.includes(keyword))) {
-          return query.responses[Math.floor(Math.random() * query.responses.length)];
-        }
-      }
-      
-      return 'I can help you with medication timing, food interactions, and reminders. What specific question do you have about your medications?';
+      return contextPrefix + medResponses[Math.floor(Math.random() * medResponses.length)];
     }
-    
-    // Blood pressure and vital signs
-    if (lowerMessage.includes('blood pressure') || lowerMessage.includes('bp') || lowerMessage.includes('hypertension')) {
+
+    // Blood pressure
+    if (lowerMessage.includes('blood pressure') || lowerMessage.includes('bp')) {
       const bpResponses = [
-        'Normal blood pressure is typically below 120/80 mmHg. Values above 140/90 may indicate hypertension.',
-        'Check your blood pressure at the same time each day, preferably in the morning before medications.',
-        'Lifestyle factors like salt intake, exercise, and stress can significantly affect blood pressure readings.',
-        'If your blood pressure is consistently high, consult your doctor about medication adjustments.'
+        'Normal blood pressure is typically below 120/80 mmHg.',
+        'Track blood pressure at the same time each day.',
+        'Lifestyle factors like salt intake, exercise, and stress can affect readings.'
       ];
-      return bpResponses[Math.floor(Math.random() * bpResponses.length)];
+      return contextPrefix + bpResponses[Math.floor(Math.random() * bpResponses.length)];
     }
-    
-    // Symptoms and health monitoring
-    if (lowerMessage.includes('symptom') || lowerMessage.includes('feel') || lowerMessage.includes('pain') || lowerMessage.includes('dizzy')) {
+
+    // Symptoms
+    if (lowerMessage.includes('symptom') || lowerMessage.includes('pain') || lowerMessage.includes('dizzy')) {
       const symptomResponses = [
-        'It\'s important to track any new or worsening symptoms. Keep a daily log of how you feel.',
-        'Dizziness can be related to blood pressure changes, dehydration, or medication side effects.',
-        'Any chest pain, severe headache, or difficulty breathing should be reported to your doctor immediately.',
-        'Regular symptoms like fatigue or minor aches should still be discussed during your next appointment.'
+        'Track any new or worsening symptoms daily.',
+        'Dizziness can be related to blood pressure changes or medication side effects.',
+        'Report severe symptoms immediately to your doctor.'
       ];
-      return symptomResponses[Math.floor(Math.random() * symptomResponses.length)];
+      return contextPrefix + symptomResponses[Math.floor(Math.random() * symptomResponses.length)];
     }
-    
-    // Exercise and lifestyle
-    if (lowerMessage.includes('exercise') || lowerMessage.includes('walk') || lowerMessage.includes('activity')) {
-      const exerciseResponses = [
-        'Light walking for 15-30 minutes daily can significantly improve cardiovascular health and blood sugar control.',
-        'Chair exercises and gentle stretching are great options if mobility is limited.',
-        'Always start slowly and gradually increase activity. Listen to your body and rest when needed.',
-        'Consult your doctor before starting any new exercise routine, especially if you have heart conditions.'
-      ];
-      return exerciseResponses[Math.floor(Math.random() * exerciseResponses.length)];
-    }
-    
-    // Diet and nutrition
-    if (lowerMessage.includes('food') || lowerMessage.includes('diet') || lowerMessage.includes('eat') || lowerMessage.includes('sugar')) {
-      const dietResponses = [
-        'A balanced diet with plenty of vegetables, whole grains, and lean proteins supports overall health.',
-        'Limit salt intake to help manage blood pressure. Aim for less than 2300mg sodium per day.',
-        'Monitor blood sugar levels if diabetic. Consistent meal timing helps regulate glucose.',
-        'Stay hydrated with water throughout the day. Limit caffeine and alcohol consumption.'
-      ];
-      return dietResponses[Math.floor(Math.random() * dietResponses.length)];
-    }
-    
-    // General health and emergency
-    if (lowerMessage.includes('emergency') || lowerMessage.includes('urgent') || lowerMessage.includes('help')) {
-      return 'For medical emergencies, call your local emergency number immediately. For urgent but non-emergency concerns, contact your doctor or nurse hotline. I can provide general information but cannot replace professional medical care.';
-    }
-    
-    // Friendly general responses
+
+    // Exercise / diet / general
     const generalResponses = [
-      'I\'m here to help with your health questions. You can ask me about medications, symptoms, blood pressure, exercise, or general wellness.',
-      'Remember, I provide general health information. Always consult your doctor for personalized medical advice.',
-      'What specific aspect of your health would you like to discuss today?',
-      'Feel free to ask about medication reminders, symptom tracking, or healthy lifestyle tips.'
+      'I\'m here to help with health questions.',
+      'Remember to consult your doctor for personalized advice.',
+      'Ask me about medication timing, symptoms, or healthy lifestyle tips.'
     ];
-    
-    return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+    return contextPrefix + generalResponses[Math.floor(Math.random() * generalResponses.length)];
   };
 
   const handleSendMessage = async () => {
@@ -146,7 +91,6 @@ const EnhancedAIChat = () => {
     setCurrentMessage('');
     setIsTyping(true);
 
-    // Simulate AI thinking time
     setTimeout(async () => {
       const aiResponse = await getAIResponse(currentMessage);
       const responseMessage: ChatMessage = {
