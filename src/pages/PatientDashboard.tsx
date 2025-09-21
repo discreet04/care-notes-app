@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Check, LogOut } from "lucide-react";
+import { Menu, Plus, Clock, AlertTriangle, HelpCircle, Heart, Thermometer, Activity, User, Camera, Edit, Phone, MapPin, Pill, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Sidebar from "@/components/Sidebar";
@@ -22,12 +21,10 @@ import healthSymbols from "@/assets/health-symbols.jpg";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PatientDashboard = () => {
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [medications, setMedications] = useState<any[]>([]);
-  const [user, setUser] = useState(null);
   const [symptoms, setSymptoms] = useState([
     { id: 1, name: "Blood Pressure", value: "120/80", status: "normal", icon: Heart, color: "text-green-600" },
     { id: 2, name: "Temperature", value: "98.6°F", status: "normal", icon: Thermometer, color: "text-blue-600" },
@@ -35,37 +32,6 @@ const PatientDashboard = () => {
   ]);
   const { toast } = useToast();
   const { t } = useLanguage();
-
-  // Check for authenticated user and redirect if not logged in
-  useEffect(() => {
-    const savedUser = localStorage.getItem('careconnect_user');
-    if (savedUser) {
-      try {
-        const userData = JSON.parse(savedUser);
-        if (userData.role !== 'patient') {
-          navigate('/login');
-          return;
-        }
-        setUser(userData);
-      } catch (error) {
-        navigate('/login');
-        return;
-      }
-    } else {
-      navigate('/login');
-      return;
-    }
-  }, [navigate]);
-
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem('careconnect_user');
-    toast({
-      title: "Logged out successfully",
-      description: "Thank you for using CareConnect!"
-    });
-    navigate('/login');
-  };
   
   // Update timers every minute
   useEffect(() => {
@@ -115,54 +81,8 @@ const PatientDashboard = () => {
     });
   };
 
-  // Show loading if user data is not loaded yet
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-teal-500/30 border-t-teal-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   const renderHomeContent = () => (
     <div className="space-y-6 pb-[80px]">
-      {/* Welcome message with user's name */}
-      <div className="bg-gradient-to-br from-rose-200 to-blue-200 p-6 rounded-2xl text-gray-800 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-bold mb-1">Namaste, {user.full_name}!</h1>
-              <p className="text-gray-700 text-lg">How are you feeling today?</p>
-            </div>
-            <div className="text-4xl">🙏</div>
-          </div>
-          <div className="mt-6">
-            <p className="text-gray-700 text-sm mb-3">It's time to Check Your</p>
-            <p className="text-xl font-semibold">Blood Pressure</p>
-            <p className="text-sm text-gray-600 mt-1">Yesterday's Reading: 140 mg/dl</p>
-            <div className="flex gap-3 mt-4">
-              <Button 
-                variant="ghost" 
-                className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
-                onClick={() => {
-                  toast({
-                    title: "Blood Pressure Check",
-                    description: "Remember to check your blood pressure now!"
-                  });
-                }}
-              >
-                Remind me later
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-16 -mt-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
-      </div>
-
       {/* Add New Medication Form */}
       {showMedicationForm && (
         <Card className="border-2 border-teal-200 bg-teal-50">
@@ -323,6 +243,40 @@ const PatientDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Welcome Header with modern design */}
+      <div className="bg-gradient-to-br from-rose-200 to-blue-200 p-6 rounded-2xl text-gray-800 relative overflow-hidden">
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold mb-1">{t('greeting')}</h1>
+              <p className="text-gray-700 text-lg">{t('subtitle')}</p>
+            </div>
+            <div className="text-4xl">🙏</div>
+          </div>
+          <div className="mt-6">
+            <p className="text-gray-700 text-sm mb-3">It's time to Check Your</p>
+            <p className="text-xl font-semibold">Blood Pressure</p>
+            <p className="text-sm text-gray-600 mt-1">Yesterday's Reading: 140 mg/dl</p>
+            <div className="flex gap-3 mt-4">
+              <Button 
+                variant="ghost" 
+                className="text-gray-800 border border-gray-400 px-6 py-2 rounded-full hover:bg-gray-100"
+                onClick={() => {
+                  toast({
+                    title: "Blood Pressure Check",
+                    description: "Remember to check your blood pressure now!"
+                  });
+                }}
+              >
+                Remind me later
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full -mr-16 -mt-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/20 rounded-full -ml-12 -mb-12"></div>
+      </div>
       
       {/* Ask Caretaker Help */}
       <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50 border-yellow-200 cursor-pointer hover:shadow-lg transition-all" onClick={requestCaretakerHelp}>
@@ -443,7 +397,7 @@ const PatientDashboard = () => {
       case "profile":
         return (
           <div className="space-y-4 pb-[80px]">
-            {/* Profile Header with user data */}
+            {/* Profile Header */}
             <Card>
               <CardContent className="p-0">
                 <div className="relative h-32 rounded-t-lg overflow-hidden">
@@ -457,18 +411,12 @@ const PatientDashboard = () => {
                   <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4 border-4 border-gray-200">
                     <User className="h-8 w-8 text-white" />
                   </div>
-                  <h2 className="text-xl font-bold mb-1">{user.full_name}</h2>
-                  <p className="text-gray-500">Role: {user.role} • Email: {user.email}</p>
-                  <div className="flex gap-3 mt-3">
-                    <Button size="sm">
-                      <Edit className="h-4 w-4 mr-2" />
-                      {t('editProfile')}
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={handleLogout}>
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </Button>
-                  </div>
+                  <h2 className="text-xl font-bold mb-1">Raj Kumar Sharma</h2>
+                  <p className="text-gray-500">Age: 68 • Patient ID: #12345</p>
+                  <Button size="sm" className="mt-3">
+                    <Edit className="h-4 w-4 mr-2" />
+                    {t('editProfile')}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -517,7 +465,7 @@ const PatientDashboard = () => {
                     <p className="text-sm text-gray-500">Days Med Compliant</p>
                   </div>
                   <div className="text-center p-3 bg-blue-100 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-700">{medications.length}</p>
+                    <p className="text-2xl font-bold text-blue-700">5</p>
                     <p className="text-sm text-gray-500">Active Medications</p>
                   </div>
                 </div>
@@ -574,9 +522,11 @@ const PatientDashboard = () => {
             </div>
           </div>
         );
+      case "ai-helper":
+        return <EnhancedAIChat />;
       case "panic":
         return (
-          <div className="space-y-4 pb-[80px]">
+          <div className="space-y-4">
             <Card className="border-red-400">
               <CardHeader>
                 <CardTitle className="text-xl text-red-500">Emergency Panic Button</CardTitle>
@@ -597,7 +547,7 @@ const PatientDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-[80px]">
-      {/* Header with logout button */}
+      {/* Simple Header */}
       <header className="bg-white border-b p-4 flex items-center justify-between">
         <Button
           variant="ghost"
@@ -613,26 +563,7 @@ const PatientDashboard = () => {
              activeTab === "ai-helper" ? "aiHelper" :
              activeTab === "profile" ? "profile" : "panic")}
         </h1>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <LogOut className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Logout</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        <LanguageToggle />
       </header>
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="patient" />
@@ -645,5 +576,7 @@ const PatientDashboard = () => {
     </div>
   );
 };
+
+import { useNavigate } from 'react-router-dom';
 
 export default PatientDashboard;
