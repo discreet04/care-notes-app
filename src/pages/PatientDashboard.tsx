@@ -20,6 +20,11 @@ import familyProfile from "@/assets/family-profile.jpg";
 import healthSymbols from "@/assets/health-symbols.jpg";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+const LOCAL_STORAGE_KEYS = {
+  SYMPTOMS: "loggedSymptoms_v1",
+  MEDICATIONS: "medications_v1"
+};
+
 const PatientDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("home");
@@ -33,19 +38,14 @@ const PatientDashboard = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  // New state for symptom logging
+  // Generic symptom options
   const genericSymptoms = ["Fatigue", "Headache", "Nausea", "Cough", "Dizziness", "Sore Throat", "Shortness of Breath", "Chest Pain", "Back Pain", "Insomnia"];
+
+  // persisted state
   const [loggedSymptoms, setLoggedSymptoms] = useState<any[]>([]);
   const [newSymptom, setNewSymptom] = useState({ name: "", severity: "mild", notes: "" });
 
-  // Update timers every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMedications(prev => [...prev]); // Trigger re-render for timer updates
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
+  // medication form state
   const [medicationForm, setMedicationForm] = useState({
     name: "",
     dosage: "",
@@ -54,6 +54,59 @@ const PatientDashboard = () => {
     instructions: ""
   });
 
+  // Load persisted data on mount
+  useEffect(() => {
+    // Load logged symptoms
+    try {
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.SYMPTOMS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setLoggedSymptoms(parsed);
+      }
+    } catch (e) {
+      // invalid JSON or other issue - ignore and continue with empty state
+      console.warn("Failed to load loggedSymptoms from localStorage:", e);
+    }
+
+    // Load medications
+    try {
+      const rawMed = localStorage.getItem(LOCAL_STORAGE_KEYS.MEDICATIONS);
+      if (rawMed) {
+        const parsedMed = JSON.parse(rawMed);
+        if (Array.isArray(parsedMed)) setMedications(parsedMed);
+      }
+    } catch (e) {
+      console.warn("Failed to load medications from localStorage:", e);
+    }
+  }, []);
+
+  // Save loggedSymptoms whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SYMPTOMS, JSON.stringify(loggedSymptoms));
+    } catch (e) {
+      console.warn("Failed to save loggedSymptoms to localStorage:", e);
+    }
+  }, [loggedSymptoms]);
+
+  // Save medications whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.MEDICATIONS, JSON.stringify(medications));
+    } catch (e) {
+      console.warn("Failed to save medications to localStorage:", e);
+    }
+  }, [medications]);
+
+  // Keep timers updating every minute (for medication timers)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMedications(prev => [...prev]); // triggers re-render if timers are shown
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Medication handlers
   const handleAddMedication = () => {
     if (!medicationForm.name || !medicationForm.dosage || !medicationForm.frequency) {
       toast({
@@ -69,7 +122,7 @@ const PatientDashboard = () => {
       ...medicationForm
     };
     
-    setMedications([...medications, newMedication]);
+    setMedications(prev => [newMedication, ...prev]);
     setMedicationForm({ name: "", dosage: "", frequency: "", time: "", instructions: "" });
     setShowMedicationForm(false);
     
@@ -79,6 +132,10 @@ const PatientDashboard = () => {
     });
   };
 
+  const removeMedication = (id: number) => {
+    setMedications(prev => prev.filter(m => m.id !== id));
+  };
+
   const requestCaretakerHelp = () => {
     toast({
       title: t('needHelp'), 
@@ -86,7 +143,7 @@ const PatientDashboard = () => {
     });
   };
 
-  // --- Symptom handlers ---
+  // Symptom handlers
   const addSymptom = () => {
     if (!newSymptom.name || newSymptom.name.trim() === "") {
       toast({
@@ -118,7 +175,7 @@ const PatientDashboard = () => {
     setLoggedSymptoms(prev => prev.filter(s => s.id !== id));
   };
 
-  // --- Render functions ---
+  // Renderers
   const renderHomeContent = () => (
     <div className="space-y-6 pb-[80px]">
       {/* Add New Medication Form */}
@@ -267,12 +324,17 @@ const PatientDashboard = () => {
                           {calculateTimeUntilDose(med.time)}
                         </div>
                       )}
-                      <Button 
-                        size="sm" 
-                        className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4"
-                      >
-                        ✓ {t('taken')}
-                      </Button>
+                      <div className="flex gap-2 justify-end items-center">
+                        <Button 
+                          size="sm" 
+                          className="bg-teal-600 text-white hover:bg-teal-700 rounded-full px-4"
+                        >
+                          ✓ {t('taken')}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => removeMedication(med.id)} className="text-red-600">
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
