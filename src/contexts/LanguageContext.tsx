@@ -87,7 +87,11 @@ const translations = {
     
     // Emergency
     emergencyPanicButton: "Emergency Panic Button",
-    emergencyHelp: "Emergency Help"
+    emergencyHelp: "Emergency Help",
+
+    // Misc
+    patientDetails: "Patient Details",
+    close: "Close"
   },
   hi: {
     // New translations added for the blood pressure card
@@ -164,7 +168,11 @@ const translations = {
     
     // Emergency
     emergencyPanicButton: "आपातकालीन पैनिक बटन",
-    emergencyHelp: "आपातकालीन सहायता"
+    emergencyHelp: "आपातकालीन सहायता",
+
+    // Misc
+    patientDetails: "रोगी विवरण",
+    close: "बंद करें"
   }
 };
 
@@ -194,48 +202,16 @@ export const useLanguage = () => {
   return context;
 };
 
-// --- Symptoms Component that uses the Language Hook ---
-const Symptoms = () => {
-  const { t } = useLanguage();
-
-  return (
-    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg mx-auto my-12">
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-1">{t('greeting')}</h2>
-          <p className="text-lg text-gray-500">{t('subtitle')}</p>
-        </div>
-        <span className="text-4xl">🙏</span>
-      </div>
-
-      <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 mb-6">
-        <p className="text-sm font-medium text-gray-500 mb-2">{t('timeToCheck')}</p>
-        <h3 className="text-3xl font-bold text-gray-800 mb-1">{t('bloodPressure')}</h3>
-        <p className="text-sm text-gray-500 mb-4">{t('yesterdaysReading')}</p>
-        <button className="w-full py-3 px-6 text-base font-semibold text-white bg-purple-500 rounded-full hover:bg-purple-600 transition-colors duration-300">
-          {t('remindMeLater')}
-        </button>
-      </div>
-      
-      {/* Other Symptom UI elements would go here */}
-    </div>
-  );
-};
-
-// --- Main App Component to demonstrate usage ---
-export default function App() {
-  const { language, toggleLanguage } = useLanguage();
-
+// If you want a small in-file demo, wrap usage with LanguageProvider like this:
+/*
+import React from 'react';
+export function DemoApp() {
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-gray-100 p-8">
-        <div className="absolute top-4 right-4">
-          <button onClick={toggleLanguage} className="bg-white border rounded-full px-4 py-2 shadow-md hover:bg-gray-50 transition-colors">
-            Change to {language === 'en' ? 'Hindi' : 'English'}
-          </button>
-        </div>
-        <Symptoms />
-      </div>
+      <YourAppHere />
     </LanguageProvider>
   );
 }
+*/
+
+export default LanguageProvider

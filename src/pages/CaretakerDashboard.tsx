@@ -23,6 +23,8 @@ import {
   XCircle,
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
@@ -58,12 +60,14 @@ type Invitation = {
 
 const CaretakerDashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const [patients, setPatients] = useState<Patient[]>([
     {
       id: 3,
-      patientName: "Alice Johnson",
+      patientName: "अलिस जॉनसन",
       phone: "+91 9876543211",
       age: 72,
       lastActivity: "2 hours ago",
@@ -77,7 +81,7 @@ const CaretakerDashboard: React.FC = () => {
     },
     {
       id: 4,
-      patientName: "Robert Chen",
+      patientName: "रॉबर्ट चेन",
       phone: "+91 8765432108",
       age: 68,
       lastActivity: "30 minutes ago",
@@ -91,7 +95,7 @@ const CaretakerDashboard: React.FC = () => {
     },
     {
       id: 5,
-      patientName: "Margaret Davis",
+      patientName: "मार्गरेट डेविस",
       phone: "+91 7654321098",
       age: 78,
       lastActivity: "1 day ago",
@@ -115,7 +119,7 @@ const CaretakerDashboard: React.FC = () => {
       case "high":
         return "bg-rose-100 text-rose-800 border-rose-200";
       case "medium":
-        return "bg-amber-100 text-teal-800 border-teal-200";
+        return "bg-amber-100 text-amber-800 border-amber-200";
       case "low":
         return "bg-yellow-50 text-yellow-800 border-yellow-100";
       default:
@@ -124,8 +128,8 @@ const CaretakerDashboard: React.FC = () => {
   };
 
   const getComplianceColor = (compliance: number) => {
-    if (compliance >= 90) return "text-teal-800";
-    if (compliance >= 70) return "text-teal-700";
+    if (compliance >= 90) return "text-amber-800";
+    if (compliance >= 70) return "text-amber-700";
     return "text-rose-700";
   };
 
@@ -180,7 +184,7 @@ const CaretakerDashboard: React.FC = () => {
   const lowComplianceCount = patients.filter((p) => p.medicationCompliance < 70).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-emerald-50 to-amber-50 text-stone-900">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-amber-100 to-amber-50 text-stone-900">
       {/* Header */}
       <header className="bg-white/90 shadow-sm border-b p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -201,15 +205,35 @@ const CaretakerDashboard: React.FC = () => {
             <Input placeholder="Search patients..." className="bg-transparent border-0 p-0 focus:ring-0" />
           </div>
         </div>
-        <div className="w-6" />
+        <div className="hidden md:flex items-center"><LanguageToggle /></div>
       </header>
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} currentRole="caretaker" />
 
+      
+      {selectedPatient && (
+        <div className="fixed right-4 top-20 w-[95%] max-w-sm md:max-w-md z-50">
+          <Card className="shadow-lg">
+            <CardHeader className="bg-teal-50">
+              <CardTitle className="flex items-center justify-between">
+                <span>{t ? t('patientDetails') : 'Patient Details'}</span>
+                <Button size="sm" variant="ghost" onClick={() => setSelectedPatient(null)}>Close</Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-semibold">Name: {patients.find(p => p.id === selectedPatient)?.patientName}</p>
+              <p>Phone: {patients.find(p => p.id === selectedPatient)?.phone}</p>
+              <p>Age: {patients.find(p => p.id === selectedPatient)?.age}</p>
+              <p className="mt-2 text-sm text-stone-600">Demo notes: This is a demo detail view for the selected patient.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="p-4 md:p-6 space-y-6">
         {/* Quick stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-r from-teal-200 to-emerald-200 text-stone-900">
+          <Card className="bg-gradient-to-r from-amber-200 to-amber-300 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -221,7 +245,7 @@ const CaretakerDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-rose-200 to-amber-200 text-stone-900">
+          <Card className="bg-gradient-to-r from-rose-200 to-rose-300 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -233,7 +257,7 @@ const CaretakerDashboard: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-emerald-100 to-amber-200 text-stone-900">
+          <Card className="bg-gradient-to-r from-yellow-100 to-amber-200 text-stone-900">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -249,7 +273,7 @@ const CaretakerDashboard: React.FC = () => {
         {/* Invitations */}
         {invitations.length > 0 && (
           <Card className="shadow-sm">
-            <CardHeader className="bg-teal-50">
+            <CardHeader className="bg-amber-50">
               <CardTitle className="text-lg flex items-center gap-2">
                 <UserCheck className="h-4 w-4" />
                 Patient Invitations
@@ -261,7 +285,7 @@ const CaretakerDashboard: React.FC = () => {
             <CardContent className="p-6 space-y-4">
               <TooltipProvider>
                 {invitations.map((invitation) => (
-                  <div key={invitation.id} className="border-l-4 border-teal-200 bg-teal-50 rounded-lg p-4">
+                  <div key={invitation.id} className="border-l-4 border-amber-200 bg-amber-50 rounded-lg p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <h3 className="font-semibold text-stone-900">{invitation.patientName}</h3>
@@ -280,7 +304,7 @@ const CaretakerDashboard: React.FC = () => {
                             <Button
                               size="sm"
                               aria-label={`Accept ${invitation.patientName}`}
-                              className="flex items-center bg-teal-100 text-teal-800 hover:bg-teal-200"
+                              className="flex items-center bg-amber-100 text-amber-800 hover:bg-amber-200"
                               onClick={() => handleAcceptInvitation(invitation.id)}
                             >
                               <UserCheck className="h-4 w-4" />
@@ -320,7 +344,7 @@ const CaretakerDashboard: React.FC = () => {
 
         {/* My Patients */}
         <Card className="shadow-sm">
-          <CardHeader className="bg-teal-50 flex items-center justify-between">
+          <CardHeader className="bg-amber-50 flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
               <Heart className="h-4 w-4 text-rose-500" />
               My Patients
@@ -331,7 +355,7 @@ const CaretakerDashboard: React.FC = () => {
 
             <Button
               onClick={handleAddPatientClick}
-              className="bg-teal-200 text-stone-900 hover:bg-teal-300"
+              className="bg-amber-200 text-stone-900 hover:bg-amber-300"
               size="sm"
               aria-label="Add patient"
             >
@@ -355,7 +379,7 @@ const CaretakerDashboard: React.FC = () => {
               <div className="space-y-4">
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
-                  <Input placeholder="Search patients..." className="pl-10 border-stone-200 focus:border-teal-300 focus:ring-teal-300" />
+                  <Input placeholder="Search patients..." className="pl-10 border-stone-200 focus:border-amber-300 focus:ring-amber-300" />
                 </div>
 
                 {patients.map((patient) => (
@@ -368,7 +392,7 @@ const CaretakerDashboard: React.FC = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-lg text-stone-900">{patient.patientName}</h3>
+                          <h3 onClick={() => setSelectedPatient(patient.id)} className="font-semibold text-lg text-stone-900 cursor-pointer underline">{patient.patientName}</h3>
 
                           <Badge className={`${getRiskLevelColor(patient.riskLevel)} border`}>
                             {String(patient.riskLevel).toUpperCase()} RISK
@@ -395,7 +419,7 @@ const CaretakerDashboard: React.FC = () => {
                                   <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                                 </>
                               ) : (
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                               )}
                             </span>
                             <span>Last seen: {patient.lastActivity}</span>
@@ -425,7 +449,7 @@ const CaretakerDashboard: React.FC = () => {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-sm text-teal-800 flex items-center gap-1">
+                          <p className="text-sm text-amber-800 flex items-center gap-1">
                             <CheckCircle className="h-4 w-4" />
                             No symptoms reported
                           </p>
@@ -441,7 +465,7 @@ const CaretakerDashboard: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <div className="flex-1 bg-stone-200 rounded-full h-2 overflow-hidden">
                             <div
-                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-teal-600" : patient.medicationCompliance >= 70 ? "bg-emerald-400" : "bg-rose-500"}`}
+                              className={`h-2 rounded-full ${patient.medicationCompliance >= 90 ? "bg-amber-600" : patient.medicationCompliance >= 70 ? "bg-amber-400" : "bg-rose-500"}`}
                               style={{ width: `${patient.medicationCompliance}%` }}
                             />
                           </div>
